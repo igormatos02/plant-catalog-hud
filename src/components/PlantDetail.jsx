@@ -12,6 +12,8 @@ const MetricBox = ({ icon: Icon, label, value }) => (
 );
 
 const PlantDetail = ({ plant, onBack, isLoading }) => {
+    const [imageLoaded, setImageLoaded] = React.useState(false);
+
     if (isLoading) {
         return (
             <div style={{ height: '70vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
@@ -36,12 +38,44 @@ const PlantDetail = ({ plant, onBack, isLoading }) => {
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '40px' }}>
                 {/* Left Col: Image & HUD Overlays */}
-                <div style={{ position: 'relative' }}>
-                    <div className="hud-border" style={{ padding: '4px', background: 'var(--accent-color)' }}>
+                <div style={{ position: 'relative', minHeight: '400px' }}>
+                    <div className="hud-border" style={{ padding: '4px', background: 'var(--accent-color)', height: '100%', position: 'relative', overflow: 'hidden' }}>
+                        {!imageLoaded && (
+                            <div style={{
+                                height: '100%',
+                                width: '100%',
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                zIndex: 10,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                background: 'rgba(5, 12, 16, 0.9)',
+                                backdropFilter: 'blur(10px)'
+                            }}>
+                                <Loader2 className="animate-spin" size={32} color="var(--accent-color)" />
+                                <p className="mono" style={{ marginTop: '15px', fontSize: '0.7rem', color: 'var(--accent-color)', letterSpacing: '2px', textAlign: 'center', padding: '0 20px' }}>
+                                    INITIATING NEURAL VISUALIZATION...
+                                </p>
+                                <div className="mono" style={{ fontSize: '0.5rem', color: 'var(--text-secondary)', marginTop: '5px' }}>
+                                    RECONSTRUCTING_SPECIMEN_GEOMETRY
+                                </div>
+                            </div>
+                        )}
                         <img
-                            src={`${plant.picture_url}?v=${Math.random()}`}
+                            src={plant.picture_url}
                             alt={plant.name}
-                            style={{ width: '100%', display: 'block', filter: 'grayscale(0.1) contrast(1.1)' }}
+                            onLoad={() => setImageLoaded(true)}
+                            onError={() => setImageLoaded(true)} // Still clear loading state on error to show broken image or fallback
+                            style={{
+                                width: '100%',
+                                display: 'block',
+                                filter: 'grayscale(0.1) contrast(1.1)',
+                                animation: 'fadeIn 0.8s ease',
+                                opacity: imageLoaded ? 1 : 0
+                            }}
                         />
                     </div>
 

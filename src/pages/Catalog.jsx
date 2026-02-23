@@ -10,6 +10,7 @@ const Catalog = ({ language }) => {
     const [isSearching, setIsSearching] = useState(false);
     const [selectedPlant, setSelectedPlant] = useState(null);
     const [isLoadingDetail, setIsLoadingDetail] = useState(false);
+    const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
     const performSearch = useCallback(async (query, lang) => {
         if (!query) return;
@@ -27,31 +28,43 @@ const Catalog = ({ language }) => {
 
     const loadPlantDetails = useCallback(async (plantName, lang) => {
         setIsLoadingDetail(true);
+        setIsGeneratingImage(true);
         try {
-            // Direct fetch from Gemini AI, bypassing the database cache
+            // PHASE 1: Data Decryption (Text & Metadata)
             const geminiDetails = await getPlantDetails(plantName, lang);
             if (geminiDetails) {
-                const searchTerm = geminiDetails.image_search_term || plantName;
-                const updatedPlant = {
+                // Initialize plant with text data first
+                const basePlant = {
                     name: plantName,
                     description: geminiDetails.description,
-                    picture_url: `https://loremflickr.com/1024/1024/${encodeURIComponent(searchTerm.replace(/\s+/g, ','))},plant,botany`,
-                    metadata: geminiDetails.metadata
+                    picture_url: null, // Image will be generated in Phase 2
+                    metadata: geminiDetails.metadata,
+                    ai_image_prompt: geminiDetails.ai_image_prompt
                 };
 
-                setSelectedPlant(updatedPlant);
+                setSelectedPlant(basePlant);
+                setIsLoadingDetail(false); // Text is now visible
+
+                // PHASE 2: Neural Visualization (AI Image Generation)
+                const prompt = geminiDetails.ai_image_prompt || plantName;
+                const aiImageUrl = `https://pollinations.ai/p/${encodeURIComponent(prompt)}?width=1024&height=1024&nologo=true&seed=${Math.floor(Math.random() * 10000)}`;
+
+                console.log("Initiating visualization with prompt:", prompt);
+
+                // We set the URL immediately. PlantDetail will show its own loading HUD
+                // until the browser natively loads the image.
+                setSelectedPlant(prev => prev ? { ...prev, picture_url: aiImageUrl } : null);
             }
         } catch (err) {
-            console.error("Error fetching plant details:", err);
-            // Fallback for demonstration purposes
+            console.error("Discovery sequence failure:", err);
             setSelectedPlant({
                 name: plantName,
-                description: "Botanical data retrieval failed. System operating in diagnostic mode.",
-                picture_url: "https://images.unsplash.com/photo-1501004318641-73e49c33ba4b?auto=format&fit=crop&q=80&w=1000",
-                metadata: { humidity: 'N/A', temperature: 'N/A', light: 'N/A', toxicity: 'N/A' }
+                description: "Critical error in botanical data stream.",
+                picture_url: "https://loremflickr.com/1024/1024/plant,error",
+                metadata: { humidity: 'ERR', temperature: 'ERR', light: 'ERR', toxicity: 'ERR' }
             });
-        } finally {
             setIsLoadingDetail(false);
+            setIsGeneratingImage(false);
         }
     }, []);
 
@@ -155,6 +168,7 @@ const Catalog = ({ language }) => {
                         setResults([]);
                     }}
                     isLoading={isLoadingDetail}
+                    isGeneratingImage={isGeneratingImage}
                 />
             )}
         </div>
