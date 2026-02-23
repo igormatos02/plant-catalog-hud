@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Search, Info, Database, Zap, Loader2, Thermometer, Droplets, Sun, Skull } from 'lucide-react';
-import { searchPlants, getPlantDetails, generatePlantImage } from '../lib/gemini';
+import { searchPlants, getPlantDetails } from '../lib/gemini';
 import PlantDetail from '../components/PlantDetail';
 import PlantGrid from '../components/PlantGrid';
 
@@ -43,21 +43,6 @@ const Catalog = ({ language }) => {
 
                 setSelectedPlant(basePlant);
                 setIsLoadingDetail(false); // Text is now visible
-
-                // PHASE 2: Specimen Visualization (Dedicated AI Method)
-                try {
-                    const aiImageUrl = await generatePlantImage(plantName, geminiDetails.description);
-                    if (aiImageUrl) {
-                        setSelectedPlant(prev => prev ? { ...prev, picture_url: aiImageUrl } : null);
-                    } else {
-                        setSelectedPlant(prev => prev ? { ...prev, picture_url: `https://loremflickr.com/1024/1024/${encodeURIComponent(plantName)},plant` } : null);
-                    }
-                } catch (err) {
-                    console.error("Visualization phase failure:", err);
-                    setSelectedPlant(prev => prev ? { ...prev, picture_url: `https://loremflickr.com/1024/1024/${encodeURIComponent(plantName)},plant` } : null);
-                } finally {
-                    setIsGeneratingImage(false);
-                }
             }
         } catch (err) {
             console.error("Discovery sequence failure:", err);

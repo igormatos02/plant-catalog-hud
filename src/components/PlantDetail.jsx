@@ -11,15 +11,8 @@ const MetricBox = ({ icon: Icon, label, value }) => (
     </div>
 );
 
-const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage }) => {
+const PlantDetail = ({ plant, onBack, isLoading }) => {
     const [imageLoaded, setImageLoaded] = React.useState(false);
-
-    // Reset image loading state when the picture URL changes (e.g., from null to a generated URL)
-    React.useEffect(() => {
-        if (plant?.picture_url) {
-            setImageLoaded(false);
-        }
-    }, [plant?.picture_url]);
 
     if (isLoading) {
         return (
@@ -37,10 +30,6 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage }) => {
 
     if (!plant) return null;
 
-    // The image area shows a loading HUD if either the AI is still generating the URL
-    // OR if the URL is set but the browser hasn't finished downloading the bits.
-    const showImageLoading = isGeneratingImage || !imageLoaded || !plant.picture_url;
-
     return (
         <div className="plant-detail" style={{ animation: 'fadeIn 0.5s ease' }}>
             <button onClick={onBack} className="mono" style={{ color: 'var(--text-secondary)', marginBottom: '30px', display: 'flex', alignItems: 'center', gap: '8px', background: 'none', border: 'none', cursor: 'pointer' }}>
@@ -51,7 +40,7 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage }) => {
                 {/* Left Col: Image & HUD Overlays */}
                 <div style={{ position: 'relative', minHeight: '400px' }}>
                     <div className="hud-border" style={{ padding: '4px', background: 'var(--accent-color)', height: '100%', position: 'relative', overflow: 'hidden' }}>
-                        {showImageLoading && (
+                        {!imageLoaded && (
                             <div style={{
                                 height: '100%',
                                 width: '100%',
@@ -68,28 +57,26 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage }) => {
                             }}>
                                 <Loader2 className="animate-spin" size={32} color="var(--accent-color)" />
                                 <p className="mono" style={{ marginTop: '15px', fontSize: '0.7rem', color: 'var(--accent-color)', letterSpacing: '2px', textAlign: 'center', padding: '0 20px' }}>
-                                    {isGeneratingImage ? "INITIATING NEURAL VISUALIZATION..." : "RESOLVING VISUAL SPECIMEN..."}
+                                    INITIATING NEURAL VISUALIZATION...
                                 </p>
                                 <div className="mono" style={{ fontSize: '0.5rem', color: 'var(--text-secondary)', marginTop: '5px' }}>
-                                    {isGeneratingImage ? "RECONSTRUCTING_SPECIMEN_GEOMETRY" : "DECRYPTING_PIXEL_DATA"}
+                                    RECONSTRUCTING_SPECIMEN_GEOMETRY
                                 </div>
                             </div>
                         )}
-                        {plant.picture_url && (
-                            <img
-                                src={plant.picture_url}
-                                alt={plant.name}
-                                onLoad={() => setImageLoaded(true)}
-                                onError={() => setImageLoaded(true)}
-                                style={{
-                                    width: '100%',
-                                    display: 'block',
-                                    filter: 'grayscale(0.1) contrast(1.1)',
-                                    animation: 'fadeIn 0.8s ease',
-                                    opacity: imageLoaded ? 1 : 0
-                                }}
-                            />
-                        )}
+                        <img
+                            src=""
+                            alt={plant.name}
+                            onLoad={() => setImageLoaded(true)}
+                            onError={() => setImageLoaded(true)} // Still clear loading state on error to show broken image or fallback
+                            style={{
+                                width: '100%',
+                                display: 'block',
+                                filter: 'grayscale(0.1) contrast(1.1)',
+                                animation: 'fadeIn 0.8s ease',
+                                opacity: imageLoaded ? 1 : 0
+                            }}
+                        />
                     </div>
 
                     {/* HUD Accents */}
