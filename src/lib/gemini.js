@@ -44,7 +44,6 @@ export const searchPlants = async (query, language = 'en') => {
             const model = getModel(modelName);
             const result = await model.generateContent(prompt);
             const text = result.response.text();
-
             console.log(`[Gemini] Successfully received response from ${modelName}`);
 
             const cleanJson = text.replace(/```json|```/g, "").trim();

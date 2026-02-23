@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Search, Info, Database, Zap, Loader2, Thermometer, Droplets, Sun, Skull } from 'lucide-react';
-import { searchPlants, getPlantDetails } from '../lib/gemini';
+import { searchPlants, getPlantDetails, generatePlantImage } from '../lib/gemini';
 import PlantDetail from '../components/PlantDetail';
 import PlantGrid from '../components/PlantGrid';
 
@@ -43,6 +43,9 @@ const Catalog = ({ language }) => {
 
                 setSelectedPlant(basePlant);
                 setIsLoadingDetail(false); // Text is now visible
+                setIsGeneratingImage(true); // Signal Phase 2 start
+
+
             }
         } catch (err) {
             console.error("Discovery sequence failure:", err);
