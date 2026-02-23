@@ -49,7 +49,7 @@ export const searchPlants = async (query, language = 'en') => {
             const cleanJson = text.replace(/```json|```/g, "").trim();
             return JSON.parse(cleanJson);
         } catch (error) {
-            // console.error(`[Gemini] Error with ${modelName}:`, error.message);
+            console.error(`[Gemini] Error with ${modelName}:`, error.message);
             // if (modelName === modelsToTry[modelsToTry.length - 1]) throw error;
         }
     }
