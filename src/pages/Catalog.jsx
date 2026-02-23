@@ -38,29 +38,18 @@ const Catalog = ({ language }) => {
                     name: plantName,
                     description: geminiDetails.description,
                     picture_url: null, // Image will be generated in Phase 2
-                    metadata: geminiDetails.metadata,
-                    ai_image_prompt: geminiDetails.ai_image_prompt
+                    metadata: geminiDetails.metadata
                 };
 
                 setSelectedPlant(basePlant);
                 setIsLoadingDetail(false); // Text is now visible
-
-                // PHASE 2: Neural Visualization (AI Image Generation)
-                const prompt = geminiDetails.ai_image_prompt || plantName;
-                const aiImageUrl = `https://pollinations.ai/p/${encodeURIComponent(prompt)}?width=1024&height=1024&nologo=true&seed=${Math.floor(Math.random() * 10000)}`;
-
-                console.log("Initiating visualization with prompt:", prompt);
-
-                // We set the URL immediately. PlantDetail will show its own loading HUD
-                // until the browser natively loads the image.
-                setSelectedPlant(prev => prev ? { ...prev, picture_url: aiImageUrl } : null);
+                setSelectedPlant(prev => prev ? { ...prev } : null);
             }
         } catch (err) {
             console.error("Discovery sequence failure:", err);
             setSelectedPlant({
                 name: plantName,
                 description: "Critical error in botanical data stream.",
-                picture_url: "https://loremflickr.com/1024/1024/plant,error",
                 metadata: { humidity: 'ERR', temperature: 'ERR', light: 'ERR', toxicity: 'ERR' }
             });
             setIsLoadingDetail(false);

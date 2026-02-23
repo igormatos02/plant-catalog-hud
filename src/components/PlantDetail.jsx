@@ -65,7 +65,7 @@ const PlantDetail = ({ plant, onBack, isLoading }) => {
                             </div>
                         )}
                         <img
-                            src={plant.picture_url}
+                            src=""
                             alt={plant.name}
                             onLoad={() => setImageLoaded(true)}
                             onError={() => setImageLoaded(true)} // Still clear loading state on error to show broken image or fallback

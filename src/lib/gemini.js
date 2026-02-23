@@ -34,7 +34,6 @@ export const searchPlants = async (query, language = 'en') => {
     - "origin" (Origin of the plant in ${langName})
     - "type" (type of plant in ${langName})
     - "scientific_name" (complete scientific name)
-    - "ai_image_prompt" (A high-fidelity English prompt to generate a cinematic, 1024x1024, macro botanical specimen photo for a HUD interface)
     Only return the JSON array, no other text.`;
 
     const modelsToTry = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-pro"];
@@ -68,7 +67,6 @@ export const getPlantDetails = async (plantName, language = 'en') => {
     Return a JSON object with the following fields (all text must be in ${langName}):
     - description: A detailed, high-fidelity description (HUD style, technical but poetic in ${langName}).
     - metadata: An object with "humidity", "temperature", "light", and "toxicity" (values in ${langName} if applicable).
-    - ai_image_prompt: A high-fidelity, cinematic English prompt to generate an 8k macro botanical specimen image for a futuristic scientific HUD.
     Only return the JSON object, no other text.`;
 
     const modelsToTry = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-pro"];
