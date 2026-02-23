@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Search, Info, Database, Zap, Loader2, Thermometer, Droplets, Sun, Skull } from 'lucide-react';
-import { supabase } from '../lib/supabaseClient';
 import { searchPlants, getPlantDetails } from '../lib/gemini';
 import PlantDetail from '../components/PlantDetail';
 import PlantGrid from '../components/PlantGrid';
@@ -29,32 +28,27 @@ const Catalog = ({ language }) => {
     const loadPlantDetails = useCallback(async (plantName, lang) => {
         setIsLoadingDetail(true);
         try {
-            // Check Supabase first (Note: ideally we would have language-specific caching)
-            const { data, error } = await supabase
-                .from('plants')
-                .select('*')
-                .eq('name', plantName)
-                .single();
-
-            // If found in DB, we still might want to re-fetch if the language is different
-            // For now, if it's in DB, we use it, but the user wants the prompt remade.
-            // To ensure language changes effect existing selections, we'll bypass cache if we're explicitly changing language
-
+            // Direct fetch from Gemini AI, bypassing the database cache
             const geminiDetails = await getPlantDetails(plantName, lang);
             if (geminiDetails) {
                 const updatedPlant = {
                     name: plantName,
                     description: geminiDetails.description,
-                    picture_url: data?.picture_url || `https://images.unsplash.com/photo-1501004318641-73e49c33ba4b?auto=format&fit=crop&q=80&w=1000`,
+                    picture_url: `https://images.unsplash.com/photo-1501004318641-73e49c33ba4b?auto=format&fit=crop&q=80&w=1000`,
                     metadata: geminiDetails.metadata
                 };
 
-                // Optional: Update cache
-                await supabase.from('plants').upsert([updatedPlant], { onConflict: 'name' });
                 setSelectedPlant(updatedPlant);
             }
         } catch (err) {
             console.error("Error fetching plant details:", err);
+            // Fallback for demonstration purposes
+            setSelectedPlant({
+                name: plantName,
+                description: "Botanical data retrieval failed. System operating in diagnostic mode.",
+                picture_url: "https://images.unsplash.com/photo-1501004318641-73e49c33ba4b?auto=format&fit=crop&q=80&w=1000",
+                metadata: { humidity: 'N/A', temperature: 'N/A', light: 'N/A', toxicity: 'N/A' }
+            });
         } finally {
             setIsLoadingDetail(false);
         }
