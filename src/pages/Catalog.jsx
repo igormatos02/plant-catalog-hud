@@ -31,10 +31,11 @@ const Catalog = ({ language }) => {
             // Direct fetch from Gemini AI, bypassing the database cache
             const geminiDetails = await getPlantDetails(plantName, lang);
             if (geminiDetails) {
+                const searchTerm = geminiDetails.image_search_term || plantName;
                 const updatedPlant = {
                     name: plantName,
                     description: geminiDetails.description,
-                    picture_url: `https://images.unsplash.com/photo-1501004318641-73e49c33ba4b?auto=format&fit=crop&q=80&w=1000`,
+                    picture_url: `https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&q=80&w=1000&sig=${encodeURIComponent(searchTerm)}`,
                     metadata: geminiDetails.metadata
                 };
 
@@ -74,7 +75,35 @@ const Catalog = ({ language }) => {
     };
 
     return (
-        <div className="catalog-container">
+        <div className="catalog-container" style={{ position: 'relative', minHeight: '80vh' }}>
+            {/* Search Loading Overlay */}
+            {isSearching && (
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    zIndex: 100,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: 'rgba(5, 12, 16, 0.8)',
+                    backdropFilter: 'blur(8px)',
+                    border: '1px solid var(--accent-color)',
+                    animation: 'fadeIn 0.3s ease'
+                }} className="glass-panel">
+                    <Loader2 className="animate-spin" size={48} color="var(--accent-color)" />
+                    <p className="mono" style={{ marginTop: '20px', letterSpacing: '4px', fontSize: '0.8rem', color: 'var(--accent-color)' }}>
+                        INITIATING GLOBAL ARCHIVE DISCOVERY...
+                    </p>
+                    <div style={{ marginTop: '10px', fontSize: '0.6rem', color: 'var(--text-secondary)' }} className="mono">
+                        AI_ENGINE: PROCESSING_BOTANICAL_QUERY
+                    </div>
+                </div>
+            )}
+
             {!selectedPlant ? (
                 <div style={{ maxWidth: '800px', margin: '0 auto' }}>
                     <header style={{ textAlign: 'center', marginBottom: '60px' }}>

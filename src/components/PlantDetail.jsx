@@ -16,7 +16,12 @@ const PlantDetail = ({ plant, onBack, isLoading }) => {
         return (
             <div style={{ height: '70vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                 <Loader2 className="animate-spin" size={48} color="var(--accent-color)" />
-                <p className="mono" style={{ marginTop: '20px', letterSpacing: '2px' }}>DECRYPTING SPECIMEN DATA...</p>
+                <p className="mono" style={{ marginTop: '20px', letterSpacing: '2px', fontSize: '1rem', color: 'var(--accent-color)' }}>
+                    NEURAL LINK ESTABLISHED: DECRYPTING SPECIMEN DATA...
+                </p>
+                <div className="mono" style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', marginTop: '10px' }}>
+                    AI_ANALYSIS: IN PROGRESS
+                </div>
             </div>
         );
     }
@@ -34,9 +39,9 @@ const PlantDetail = ({ plant, onBack, isLoading }) => {
                 <div style={{ position: 'relative' }}>
                     <div className="hud-border" style={{ padding: '4px', background: 'var(--accent-color)' }}>
                         <img
-                            src={plant.picture_url}
+                            src={`${plant.picture_url}?v=${Math.random()}`}
                             alt={plant.name}
-                            style={{ width: '100%', display: 'block', filter: 'grayscale(0.2) contrast(1.1)' }}
+                            style={{ width: '100%', display: 'block', filter: 'grayscale(0.1) contrast(1.1)' }}
                         />
                     </div>
 
