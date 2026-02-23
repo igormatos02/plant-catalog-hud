@@ -2,7 +2,7 @@ import React from 'react';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
 
-const Layout = ({ children, activePage, setActivePage }) => {
+const Layout = ({ children, activePage, setActivePage, language, setLanguage }) => {
     return (
         <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--bg-color)' }}>
             <Sidebar activePage={activePage} setActivePage={setActivePage} />
@@ -14,7 +14,7 @@ const Layout = ({ children, activePage, setActivePage }) => {
                 display: 'flex',
                 flexDirection: 'column'
             }} className="main-content-wrapper">
-                <Topbar />
+                <Topbar language={language} setLanguage={setLanguage} />
 
                 <main style={{
                     marginTop: 'var(--topbar-height)',

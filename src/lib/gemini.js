@@ -7,22 +7,36 @@ const genAI = new GoogleGenerativeAI(API_KEY || "DUMMY_KEY");
 
 const getModel = (name = "gemini-2.5-flash") => genAI.getGenerativeModel({ model: name });
 
-export const searchPlants = async (query) => {
+const getLanguageName = (code) => {
+    switch (code) {
+        case 'pt': return 'Portuguese';
+        case 'fi': return 'Finnish';
+        case 'de': return 'German';
+        case 'uk': return 'Ukrainian';
+        default: return 'English';
+    }
+};
+
+export const searchPlants = async (query, language = 'en') => {
     if (!API_KEY) {
         console.error("[Gemini] API Key missing. Please set VITE_GEMINI_API_KEY in .env");
         return [];
     }
 
+    const langName = getLanguageName(language);
     const prompt = `Act as a botanical expert. The user is searching for plants related to "${query}". 
-    Return a JSON array of up to 100 plants. 
-    Each object must have "name" (common name) and "scientific_name".
+    IMPORTANT: Provide all text content in ${langName}.
+    
+    If the name is identified Return a JSON array of up to 3 plant. 
+    Else return a JSON array of up to 10 plants. 
+    Each object must have "name" (common name in ${langName}), "type" (type of plant in ${langName}) and "scientific_name (complete scientific name)".
     Only return the JSON array, no other text.`;
 
     const modelsToTry = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-pro"];
 
     for (const modelName of modelsToTry) {
         try {
-            console.log(`[Gemini] Attempting search with model: ${modelName}`);
+            console.log(`[Gemini] Attempting search with model: ${modelName} in ${langName}`);
             const model = getModel(modelName);
             const result = await model.generateContent(prompt);
             const text = result.response.text();
@@ -39,21 +53,24 @@ export const searchPlants = async (query) => {
     return [];
 };
 
-export const getPlantDetails = async (plantName) => {
+export const getPlantDetails = async (plantName, language = 'en') => {
     if (!API_KEY) return null;
 
+    const langName = getLanguageName(language);
     const prompt = `Act as a botanical expert. Provide detailed specifications for the plant "${plantName}".
-    Return a JSON object with the following fields:
-    - description: A detailed, high-fidelity description (HUD style, technical but poetic).
-    - metadata: An object with "humidity", "temperature", "light", and "toxicity".
-    - image_prompt: A high-fidelity descriptive prompt for an AI image generator to create a cinematic botanical specimen image.
+    IMPORTANT: Provide all text content in ${langName}.
+    
+    Return a JSON object with the following fields (all text must be in ${langName}):
+    - description: A detailed, high-fidelity description (HUD style, technical but poetic in ${langName}).
+    - metadata: An object with "humidity", "temperature", "light", and "toxicity" (values in ${langName} if applicable).
+    - image_prompt: A high-fidelity descriptive prompt for an AI image generator to create a cinematic botanical specimen image (this can remain in English for better AI compatibility).
     Only return the JSON object, no other text.`;
 
     const modelsToTry = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-pro"];
 
     for (const modelName of modelsToTry) {
         try {
-            console.log(`[Gemini] Attempting details with model: ${modelName}`);
+            console.log(`[Gemini] Attempting details with model: ${modelName} in ${langName}`);
             const model = getModel(modelName);
             const result = await model.generateContent(prompt);
             const text = result.response.text();

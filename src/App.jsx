@@ -5,10 +5,16 @@ import About from './pages/About';
 
 function App() {
   const [activePage, setActivePage] = useState('catalog');
+  const [language, setLanguage] = useState('en'); // en, pt, fi
 
   return (
-    <Layout activePage={activePage} setActivePage={setActivePage}>
-      {activePage === 'catalog' && <Catalog />}
+    <Layout
+      activePage={activePage}
+      setActivePage={setActivePage}
+      language={language}
+      setLanguage={setLanguage}
+    >
+      {activePage === 'catalog' && <Catalog language={language} />}
       {activePage === 'about' && <About />}
     </Layout>
   );
