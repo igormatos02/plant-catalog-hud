@@ -147,7 +147,15 @@ const Catalog = ({ language }) => {
                     <PlantGrid plants={results} onSelectPlant={handleSelectPlant} />
                 </div>
             ) : (
-                <PlantDetail plant={selectedPlant} onBack={() => setSelectedPlant(null)} isLoading={isLoadingDetail} />
+                <PlantDetail
+                    plant={selectedPlant}
+                    onBack={() => {
+                        setSelectedPlant(null);
+                        setSearchQuery('');
+                        setResults([]);
+                    }}
+                    isLoading={isLoadingDetail}
+                />
             )}
         </div>
     );
