@@ -70,10 +70,10 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage }) => {
                             }}>
                                 <Loader2 className="animate-spin" size={32} color="var(--accent-color)" />
                                 <p className="mono" style={{ marginTop: '15px', fontSize: '0.7rem', color: 'var(--accent-color)', letterSpacing: '2px', textAlign: 'center', padding: '0 20px' }}>
-                                    {isGeneratingImage ? "INITIATING NEURAL VISUALIZATION..." : "RESOLVING VISUAL SPECIMEN..."}
+                                    {isGeneratingImage ? "SYNCHRONIZING WITH PLANTNET ARCHIVE..." : "RETRIEVING SPECIMEN IMAGERY..."}
                                 </p>
                                 <div className="mono" style={{ fontSize: '0.5rem', color: 'var(--text-secondary)', marginTop: '5px' }}>
-                                    {isGeneratingImage ? "RECONSTRUCTING_SPECIMEN_GEOMETRY" : "DECRYPTING_PIXEL_DATA"}
+                                    {isGeneratingImage ? "ALIGNING_TAXONOMIC_DATA" : "RESOLVING_GBIF_OCCURRENCE_MEDIA"}
                                 </div>
                             </div>
                         )}

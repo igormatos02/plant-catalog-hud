@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Search, Info, Database, Zap, Loader2, Thermometer, Droplets, Sun, Skull } from 'lucide-react';
 import { searchPlants, getPlantDetails } from '../lib/gemini';
+import { alignSpecies, fetchSpecimenImage } from '../lib/plantnet';
 import PlantDetail from '../components/PlantDetail';
 import PlantGrid from '../components/PlantGrid';
 
@@ -42,10 +43,37 @@ const Catalog = ({ language }) => {
                 };
 
                 setSelectedPlant(basePlant);
-                setIsLoadingDetail(false); // Text is now visible
+                setIsLoadingDetail(false); // Text is visible
                 setIsGeneratingImage(true); // Signal Phase 2 start
 
+                // PHASE 2: Specimen Identification & Visualization
+                try {
+                    // 1. Align with PlantNet to get GBIF ID and validated scientific name
+                    const alignment = await alignSpecies(geminiDetails.scientific_name || plantName);
 
+                    if (alignment && alignment.gbifId) {
+                        // 2. Fetch real specimen imagery from GBIF
+                        const realImageUrl = await fetchSpecimenImage(alignment.gbifId);
+                        if (realImageUrl) {
+                            setSelectedPlant(prev => prev ? {
+                                ...prev,
+                                picture_url: realImageUrl,
+                                scientific_name: alignment.scientificName
+                            } : null);
+                        } else {
+                            // Fallback to LoremFlickr if no GBIF image found
+                            setSelectedPlant(prev => prev ? { ...prev, picture_url: `https://loremflickr.com/1024/1024/${encodeURIComponent(plantName)},plant` } : null);
+                        }
+                    } else {
+                        // Fallback to LoremFlickr if alignment fails
+                        setSelectedPlant(prev => prev ? { ...prev, picture_url: `https://loremflickr.com/1024/1024/${encodeURIComponent(plantName)},plant` } : null);
+                    }
+                } catch (err) {
+                    console.error("Identification phase failure:", err);
+                    setSelectedPlant(prev => prev ? { ...prev, picture_url: `https://loremflickr.com/1024/1024/${encodeURIComponent(plantName)},plant` } : null);
+                } finally {
+                    setIsGeneratingImage(false);
+                }
             }
         } catch (err) {
             console.error("Discovery sequence failure:", err);
