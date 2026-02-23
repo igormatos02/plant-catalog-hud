@@ -37,6 +37,9 @@ const Catalog = ({ language }) => {
                 // Initialize plant with text data first
                 const basePlant = {
                     name: plantName,
+                    scientific_name: geminiDetails.scientific_name,
+                    class: geminiDetails.class,
+                    family: geminiDetails.family,
                     description: geminiDetails.description,
                     picture_url: null, // Image will be generated in Phase 2
                     metadata: geminiDetails.metadata

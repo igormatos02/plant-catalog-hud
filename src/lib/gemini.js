@@ -65,8 +65,21 @@ export const getPlantDetails = async (plantName, language = 'en') => {
     
     Return a JSON object with the following fields (all text must be in ${langName}, except scientific_name):
     - scientific_name: The full botanical scientific name (genus and species).
+    - class: The taxonomical class (e.g., Magnoliopsida).
+    - family: The taxonomical family (e.g., Rosaceae).
     - description: A detailed, high-fidelity description (HUD style, technical but poetic in ${langName}).
-    - metadata: An object with "humidity", "temperature", "light", and "toxicity" (values in ${langName} if applicable).
+    - metadata: An object containing:
+        - humidity: technical value for humidity needs.
+        - temperature: technical value for temperature range.
+        - light: technical value for light exposure.
+        - toxicity: safety level or toxicity notes.
+        - culinary_use: specific culinary applications (if none, state "None observed").
+        - therapeutic_use: medicinal/therapeutic properties.
+        - oils_and_florals: information about essential oils or floral uses.
+        - cultivation: brief cultivation summary.
+        - size: expected dimensions/growth height.
+        - planting_season: ideal months or seasons for planting/harvesting.
+        - pruning: pruning technical frequency or method.
     Only return the JSON object, no other text.`;
 
     const modelsToTry = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-pro"];
