@@ -89,3 +89,31 @@ export const getPlantDetails = async (plantName, language = 'en') => {
     }
     return null;
 };
+
+export const generatePlantImage = async (plantName, description) => {
+    if (!API_KEY) return null;
+
+    const prompt = `Act as an AI image prompt engineer. Based on the botanical specimen "${plantName}" and its description "${description}", create a single, high-fidelity, cinematic English prompt for a botanical specimen photo. 
+    Focus on: lighting (cinematic, cyan highlights), background black, and detail (hyper-realistic).
+    Return ONLY the prompt string, no other text.`;
+
+    const modelsToTry = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-pro"];
+
+    for (const modelName of modelsToTry) {
+        try {
+            console.log(`[Gemini] Generating image prompt with model: ${modelName}`);
+            const model = getModel(modelName);
+            const result = await model.generateContent(prompt);
+            const imagePrompt = result.response.text().trim();
+
+            const aiImageUrl = `https://pollinations.ai/p/${encodeURIComponent(imagePrompt)}?width=1024&height=1024&nologo=true&seed=${Math.floor(Math.random() * 10000)}`;
+            console.log(`[Gemini] Image generation URL prepared: ${aiImageUrl}`);
+
+            return aiImageUrl;
+        } catch (error) {
+            console.error(`[Gemini] Error generating image prompt with ${modelName}:`, error.message);
+            if (modelName === modelsToTry[modelsToTry.length - 1]) throw error;
+        }
+    }
+    return null;
+};
