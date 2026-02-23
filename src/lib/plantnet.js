@@ -1,19 +1,19 @@
 const PLANTNET_API_KEY = import.meta.env.VITE_PLANTNET_API_KEY;
 
 /**
- * Align a plant name or scientific name with the PlantNet species database.
- * @param {string} plantName - The common or scientific name to search for.
+ * Align a botanical specimen with the PlantNet database using its scientific name.
+ * @param {string} scientificName - The scientific name to search for.
  * @returns {Promise<object|null>} - The best matching species object or null.
  */
-export const alignSpecies = async (plantName) => {
+export const alignSpecies = async (scientificName) => {
     if (!PLANTNET_API_KEY) {
         console.warn("[PlantNet] API Key missing. Skipping alignment.");
         return null;
     }
 
     try {
-        const url = `https://my.plantnet.org/api/v2/projects/all/species/align?name=${encodeURIComponent(plantName)}&api-key=${PLANTNET_API_KEY}&fuzzy=true`;
-        console.log(`[PlantNet] Aligning specimen: ${plantName}`);
+        const url = `https://my.plantnet.org/api/v2/projects/all/species/align?name=${encodeURIComponent(scientificName)}&api-key=${PLANTNET_API_KEY}&fuzzy=true`;
+        console.log(`[PlantNet] Aligning scientific name: ${scientificName}`);
 
         const response = await fetch(url);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);

@@ -49,8 +49,8 @@ export const searchPlants = async (query, language = 'en') => {
             const cleanJson = text.replace(/```json|```/g, "").trim();
             return JSON.parse(cleanJson);
         } catch (error) {
-            console.error(`[Gemini] Error with ${modelName}:`, error.message);
-            if (modelName === modelsToTry[modelsToTry.length - 1]) throw error;
+            // console.error(`[Gemini] Error with ${modelName}:`, error.message);
+            // if (modelName === modelsToTry[modelsToTry.length - 1]) throw error;
         }
     }
     return [];
@@ -63,7 +63,8 @@ export const getPlantDetails = async (plantName, language = 'en') => {
     const prompt = `Act as a botanical expert. Provide detailed specifications for the plant "${plantName}".
     IMPORTANT: Provide all text (7 lines) content in ${langName}.
     
-    Return a JSON object with the following fields (all text must be in ${langName}):
+    Return a JSON object with the following fields (all text must be in ${langName}, except scientific_name):
+    - scientific_name: The full botanical scientific name (genus and species).
     - description: A detailed, high-fidelity description (HUD style, technical but poetic in ${langName}).
     - metadata: An object with "humidity", "temperature", "light", and "toxicity" (values in ${langName} if applicable).
     Only return the JSON object, no other text.`;
