@@ -43,10 +43,18 @@ const PlantGrid = ({ plants, onSelectPlant }) => {
                     <div style={{
 
                         fontSize: '0.8rem',
-                        color: 'var(--text-secondary)',
+                        color: '#ffb700',
                         fontStyle: 'italic'
                     }}>
                         {r.type}
+                    </div>
+                    <div style={{
+
+                        fontSize: '0.8rem',
+                        color: 'var(--text-secondary)',
+                        fontStyle: 'italic'
+                    }}>
+                        {r.origin}
                     </div>
                 </button>
             ))}

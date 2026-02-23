@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Search, Info, Database, Zap, Loader2, Thermometer, Droplets, Sun, Skull } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
 import { searchPlants, getPlantDetails } from '../lib/gemini';
@@ -12,14 +12,11 @@ const Catalog = ({ language }) => {
     const [selectedPlant, setSelectedPlant] = useState(null);
     const [isLoadingDetail, setIsLoadingDetail] = useState(false);
 
-    // Mock Gemini search - in a real app, this would be an API call
-    const handleSearch = async (e) => {
-        e.preventDefault();
-        if (!searchQuery) return;
-
+    const performSearch = useCallback(async (query, lang) => {
+        if (!query) return;
         setIsSearching(true);
         try {
-            const geminiResults = await searchPlants(searchQuery, language);
+            const geminiResults = await searchPlants(query, lang);
             setResults(geminiResults || []);
         } catch (err) {
             console.error("Search failed:", err);
@@ -27,52 +24,59 @@ const Catalog = ({ language }) => {
         } finally {
             setIsSearching(false);
         }
-    };
+    }, []);
 
-    const handleSelectPlant = async (plantName) => {
+    const loadPlantDetails = useCallback(async (plantName, lang) => {
         setIsLoadingDetail(true);
-
         try {
-            // 1. Check Supabase (Note: we might want to include language in cache key eventually)
+            // Check Supabase first (Note: ideally we would have language-specific caching)
             const { data, error } = await supabase
                 .from('plants')
                 .select('*')
                 .eq('name', plantName)
                 .single();
 
-            if (data) {
-                setSelectedPlant(data);
-            } else {
-                // 2. Fetch from Gemini
-                const geminiDetails = await getPlantDetails(plantName, language);
+            // If found in DB, we still might want to re-fetch if the language is different
+            // For now, if it's in DB, we use it, but the user wants the prompt remade.
+            // To ensure language changes effect existing selections, we'll bypass cache if we're explicitly changing language
 
-                if (geminiDetails) {
-                    const newPlant = {
-                        name: plantName,
-                        description: geminiDetails.description,
-                        picture_url: `https://images.unsplash.com/photo-1501004318641-73e49c33ba4b?auto=format&fit=crop&q=80&w=1000`, // Placeholder as Gemini doesn't return images directly
-                        metadata: geminiDetails.metadata
-                    };
+            const geminiDetails = await getPlantDetails(plantName, lang);
+            if (geminiDetails) {
+                const updatedPlant = {
+                    name: plantName,
+                    description: geminiDetails.description,
+                    picture_url: data?.picture_url || `https://images.unsplash.com/photo-1501004318641-73e49c33ba4b?auto=format&fit=crop&q=80&w=1000`,
+                    metadata: geminiDetails.metadata
+                };
 
-                    // 3. Save to Supabase (language-specific caching would be better, but for now we follow the user prompt)
-                    await supabase.from('plants').insert([newPlant]);
-                    setSelectedPlant(newPlant);
-                } else {
-                    throw new Error("Failed to get plant details from Gemini");
-                }
+                // Optional: Update cache
+                await supabase.from('plants').upsert([updatedPlant], { onConflict: 'name' });
+                setSelectedPlant(updatedPlant);
             }
         } catch (err) {
-            console.error("Error fetching plant:", err);
-            // Fallback for demo
-            setSelectedPlant({
-                name: plantName,
-                description: "Botanical data retrieval failed. Using cached local profile.",
-                picture_url: "https://images.unsplash.com/photo-1501004318641-73e49c33ba4b?auto=format&fit=crop&q=80&w=1000",
-                metadata: { humidity: 'N/A', temperature: 'N/A', light: 'N/A', toxicity: 'N/A' }
-            });
+            console.error("Error fetching plant details:", err);
         } finally {
             setIsLoadingDetail(false);
         }
+    }, []);
+
+    // Trigger search when language changes
+    useEffect(() => {
+        if (searchQuery) {
+            performSearch(searchQuery, language);
+        }
+        if (selectedPlant) {
+            loadPlantDetails(selectedPlant.name, language);
+        }
+    }, [language, performSearch, loadPlantDetails]);
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        performSearch(searchQuery, language);
+    };
+
+    const handleSelectPlant = (plantName) => {
+        loadPlantDetails(plantName, language);
     };
 
     return (

@@ -27,9 +27,9 @@ export const searchPlants = async (query, language = 'en') => {
     const prompt = `Act as a botanical expert. The user is searching for plants related to "${query}". 
     IMPORTANT: Provide all text content in ${langName}.
     
-    If the name is identified Return a JSON array of up to 3 plant. 
+    If the scientific_name is identified Return a JSON array of up to 1 plant. 
     Else return a JSON array of up to 10 plants. 
-    Each object must have "name" (common name in ${langName}), "type" (type of plant in ${langName}) and "scientific_name (complete scientific name)".
+    Each object must have "name" (common name in ${langName}),"origin" (Origin of the plant in ${langName}), "type" (type of plant in ${langName}) and "scientific_name (complete scientific name)".
     Only return the JSON array, no other text.`;
 
     const modelsToTry = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-pro"];
