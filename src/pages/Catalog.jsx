@@ -35,7 +35,7 @@ const Catalog = ({ language }) => {
                 const updatedPlant = {
                     name: plantName,
                     description: geminiDetails.description,
-                    picture_url: `https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&q=80&w=1000&sig=${encodeURIComponent(searchTerm)}`,
+                    picture_url: `https://loremflickr.com/1024/1024/${encodeURIComponent(searchTerm.replace(/\s+/g, ','))},plant,botany`,
                     metadata: geminiDetails.metadata
                 };
 
