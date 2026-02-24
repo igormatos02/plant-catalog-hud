@@ -1,7 +1,9 @@
 import React from 'react';
 import { Wifi, Battery, Search, Bell } from 'lucide-react';
+import { translations } from '../lib/translations';
 
 const Topbar = ({ language, setLanguage }) => {
+    const t = translations[language] || translations.en;
     const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
     const languages = [
@@ -32,7 +34,7 @@ const Topbar = ({ language, setLanguage }) => {
             <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
                 {/* Language Selector */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <span className="mono" style={{ fontSize: '0.6rem', color: 'var(--text-secondary)' }}>LANG:</span>
+                    <span className="mono" style={{ fontSize: '0.6rem', color: 'var(--text-secondary)' }}>{t.lang}</span>
                     <div style={{ display: 'flex', gap: '5px' }}>
                         {languages.map((lang) => (
                             <button
@@ -58,8 +60,8 @@ const Topbar = ({ language, setLanguage }) => {
 
                 <div style={{ width: '1px', height: '20px', background: 'var(--border-color)' }} />
                 <div className="mono" style={{ color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontSize: '0.7rem' }}>STATUS:</span>
-                    <span style={{ color: 'var(--accent-color)' }}>OPTIMAL</span>
+                    <span style={{ fontSize: '0.7rem' }}>{t.status}</span>
+                    <span style={{ color: 'var(--accent-color)' }}>{t.optimal}</span>
                 </div>
 
                 <div style={{ width: '1px', height: '20px', background: 'var(--border-color)' }} />

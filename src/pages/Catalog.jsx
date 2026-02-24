@@ -4,8 +4,10 @@ import { searchPlants, getPlantDetails } from '../lib/gemini';
 import { alignSpecies, fetchSpecimenImage } from '../lib/plantnet';
 import PlantDetail from '../components/PlantDetail';
 import PlantGrid from '../components/PlantGrid';
+import { translations } from '../lib/translations';
 
 const Catalog = ({ language }) => {
+    const t = translations[language] || translations.en;
     const [searchQuery, setSearchQuery] = useState('');
     const [results, setResults] = useState([]);
     const [isSearching, setIsSearching] = useState(false);
@@ -27,17 +29,18 @@ const Catalog = ({ language }) => {
         }
     }, []);
 
-    const loadPlantDetails = useCallback(async (plantName, lang) => {
+    const loadPlantDetails = useCallback(async (scientificName, lang) => {
         setIsLoadingDetail(true);
         setIsGeneratingImage(true);
         try {
             // PHASE 1: Data Decryption (Text & Metadata)
-            const geminiDetails = await getPlantDetails(plantName, lang);
+            const geminiDetails = await getPlantDetails(scientificName, lang);
             if (geminiDetails) {
                 // Initialize plant with text data first
                 const basePlant = {
-                    name: plantName,
-                    scientific_name: geminiDetails.scientific_name,
+                    name: geminiDetails.name,
+                    popular_name: geminiDetails.popular_name,
+                    scientific_name: scientificName,
                     class: geminiDetails.class,
                     family: geminiDetails.family,
                     description: geminiDetails.description,
@@ -52,7 +55,7 @@ const Catalog = ({ language }) => {
                 // PHASE 2: Specimen Identification & Visualization
                 try {
                     // 1. Align with PlantNet to get GBIF ID and validated scientific name
-                    const alignment = await alignSpecies(geminiDetails.scientific_name || plantName);
+                    const alignment = await alignSpecies(scientificName);
 
                     if (alignment && alignment.gbifId) {
                         // 2. Fetch real specimen imagery from GBIF
@@ -65,15 +68,15 @@ const Catalog = ({ language }) => {
                             } : null);
                         } else {
                             // Fallback to LoremFlickr if no GBIF image found
-                            setSelectedPlant(prev => prev ? { ...prev, picture_url: `https://loremflickr.com/1024/1024/${encodeURIComponent(plantName)},plant` } : null);
+                            setSelectedPlant(prev => prev ? { ...prev, picture_url: `https://loremflickr.com/1024/1024/${encodeURIComponent(scientificName)},plant` } : null);
                         }
                     } else {
                         // Fallback to LoremFlickr if alignment fails
-                        setSelectedPlant(prev => prev ? { ...prev, picture_url: `https://loremflickr.com/1024/1024/${encodeURIComponent(plantName)},plant` } : null);
+                        setSelectedPlant(prev => prev ? { ...prev, picture_url: `https://loremflickr.com/1024/1024/${encodeURIComponent(scientificName)},plant` } : null);
                     }
                 } catch (err) {
                     console.error("Identification phase failure:", err);
-                    setSelectedPlant(prev => prev ? { ...prev, picture_url: `https://loremflickr.com/1024/1024/${encodeURIComponent(plantName)},plant` } : null);
+                    setSelectedPlant(prev => prev ? { ...prev, picture_url: `https://loremflickr.com/1024/1024/${encodeURIComponent(scientificName)},plant` } : null);
                 } finally {
                     setIsGeneratingImage(false);
                 }
@@ -81,7 +84,7 @@ const Catalog = ({ language }) => {
         } catch (err) {
             console.error("Discovery sequence failure:", err);
             setSelectedPlant({
-                name: plantName,
+                scientific_name: scientificName,
                 description: "Critical error in botanical data stream.",
                 metadata: { humidity: 'ERR', temperature: 'ERR', light: 'ERR', toxicity: 'ERR' }
             });
@@ -96,7 +99,7 @@ const Catalog = ({ language }) => {
             performSearch(searchQuery, language);
         }
         if (selectedPlant) {
-            loadPlantDetails(selectedPlant.name, language);
+            loadPlantDetails(selectedPlant.scientific_name, language);
         }
     }, [language, performSearch, loadPlantDetails]);
 
@@ -105,14 +108,14 @@ const Catalog = ({ language }) => {
         performSearch(searchQuery, language);
     };
 
-    const handleSelectPlant = (plantName) => {
-        loadPlantDetails(plantName, language);
+    const handleSelectPlant = (scientificName) => {
+        loadPlantDetails(scientificName, language);
     };
 
     return (
         <div className="catalog-container" style={{ position: 'relative', minHeight: '80vh' }}>
-            {/* Search Loading Overlay */}
-            {isSearching && (
+            {/* Search or Detail Loading Overlay */}
+            {(isSearching || (isLoadingDetail && !selectedPlant)) && (
                 <div style={{
                     position: 'absolute',
                     top: 0,
@@ -130,11 +133,11 @@ const Catalog = ({ language }) => {
                     animation: 'fadeIn 0.3s ease'
                 }} className="glass-panel">
                     <Loader2 className="animate-spin" size={48} color="var(--accent-color)" />
-                    <p className="mono" style={{ marginTop: '20px', letterSpacing: '4px', fontSize: '0.8rem', color: 'var(--accent-color)' }}>
-                        INITIATING GLOBAL ARCHIVE DISCOVERY...
+                    <p className="mono" style={{ marginTop: '20px', letterSpacing: '4px', fontSize: '0.8rem', color: 'var(--accent-color)', textAlign: 'center', padding: '0 20px' }}>
+                        {isSearching ? t.initiatingDiscovery : t.decryptingSpecimen}
                     </p>
                     <div style={{ marginTop: '10px', fontSize: '0.6rem', color: 'var(--text-secondary)' }} className="mono">
-                        AI_ENGINE: PROCESSING_BOTANICAL_QUERY
+                        {t.aiProcessing}
                     </div>
                 </div>
             )}
@@ -142,15 +145,15 @@ const Catalog = ({ language }) => {
             {!selectedPlant ? (
                 <div style={{ maxWidth: '800px', margin: '0 auto' }}>
                     <header style={{ textAlign: 'center', marginBottom: '60px' }}>
-                        <h1 className="neon-text" style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '8px' }}>ARCHIVE SEARCH</h1>
-                        <p className="mono" style={{ color: 'var(--text-secondary)' }}>ACCESSING GLOBAL BOTANICAL DATABASE...</p>
+                        <h1 className="neon-text" style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '8px' }}>{t.archiveSearch}</h1>
+                        <p className="mono" style={{ color: 'var(--text-secondary)' }}>{t.accessingDatabase}</p>
                     </header>
 
                     <form onSubmit={handleSearch} style={{ position: 'relative' }}>
                         <input
                             type="text"
                             className="glass-panel hud-border"
-                            placeholder="ENTER SPECIMEN NAME OR TRAIT..."
+                            placeholder={t.placeholder}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             style={{
@@ -184,6 +187,7 @@ const Catalog = ({ language }) => {
             ) : (
                 <PlantDetail
                     plant={selectedPlant}
+                    language={language}
                     onBack={() => {
                         setSelectedPlant(null);
                         setSearchQuery('');

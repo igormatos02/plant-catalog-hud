@@ -31,6 +31,7 @@ export const searchPlants = async (query, language = 'en') => {
     Else return a JSON array of up to 10 plants. 
     Each object must have:
     - "name" (common name in ${langName})
+    - "popular_name" (popular name in ${langName})
     - "origin" (Origin of the plant in ${langName})
     - "type" (type of plant in ${langName})
     - "scientific_name" (complete scientific name)
@@ -56,23 +57,23 @@ export const searchPlants = async (query, language = 'en') => {
     return [];
 };
 
-export const getPlantDetails = async (plantName, language = 'en') => {
+export const getPlantDetails = async (scientificName, language = 'en') => {
     if (!API_KEY) return null;
 
     const langName = getLanguageName(language);
-    const prompt = `Act as a botanical expert. Provide detailed specifications for the plant "${plantName}".
+    const prompt = `Act as a botanical expert. Provide detailed specifications for the plant "${scientificName}".
     IMPORTANT: Provide all text (7 lines) content in ${langName}.
     
     Return a JSON object with the following fields (all text must be in ${langName}, except scientific_name):
-    - scientific_name: The full botanical scientific name (genus and species).
+    - name: The common name of the plant (in ${langName}).
     - class: The taxonomical class (e.g., Magnoliopsida).
     - family: The taxonomical family (e.g., Rosaceae).
-    - description: A detailed, high-fidelity description (HUD style, technical but poetic in ${langName}).
+    - description: A description with the plant type, origin, interesting facts, description of the plant leaf, flower, fruit, stem, roots, and seeds (HUD style, technical but poetic in ${langName}).
     - metadata: An object containing:
         - humidity: technical value for humidity needs.
         - temperature: technical value for temperature range.
         - light: technical value for light exposure.
-        - toxicity: safety level or toxicity notes.
+        - toxicity: Level (1-5 [1=non-toxic, 2=mildly toxic, 3=moderately toxic, 4=highly toxic, 5=lethal]) and safety level or toxicity notes.
         - culinary_use: specific culinary applications (if none, state "None observed").
         - therapeutic_use: medicinal/therapeutic properties.
         - oils_and_florals: information about essential oils or floral uses.

@@ -17,7 +17,7 @@ const PlantGrid = ({ plants, onSelectPlant }) => {
             {plants.map((r, index) => (
                 <button
                     key={r.id || index}
-                    onClick={() => onSelectPlant(r.name)}
+                    onClick={() => onSelectPlant(r.scientific_name)}
                     className="glass-panel hud-border"
                     style={{
                         padding: '20px',
@@ -29,16 +29,16 @@ const PlantGrid = ({ plants, onSelectPlant }) => {
                     }}
                 >
 
-                    <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
-                        {r.name}
+                    <div style={{ fontWeight: 600, color: 'var(--accent-color)', }}>
+                        {r.scientific_name}
                     </div>
                     <div style={{
 
-                        fontSize: '0.8rem',
-                        color: 'var(--accent-color)',
+                        fontSize: '0.7rem',
+                        color: 'var(--text-primary)',
                         fontStyle: 'italic'
                     }}>
-                        {r.scientific_name}
+                        {r.name} <div>{r.popular_name}</div>
                     </div>
                     <div style={{
 

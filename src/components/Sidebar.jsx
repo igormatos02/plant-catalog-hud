@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import { LayoutGrid, Info, ChevronLeft, ChevronRight, Leaf } from 'lucide-react';
+import { translations } from '../lib/translations';
 
-const Sidebar = ({ activePage, setActivePage }) => {
+const Sidebar = ({ activePage, setActivePage, language }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const t = translations[language] || translations.en;
 
   const menuItems = [
-    { id: 'catalog', label: 'Catalog', icon: LayoutGrid },
-    { id: 'about', label: 'About Us', icon: Info },
+    { id: 'catalog', label: t.catalog, icon: LayoutGrid },
+    { id: 'about', label: t.about, icon: Info },
   ];
 
   return (
-    <div 
+    <div
       className={`glass-panel sidebar ${isCollapsed ? 'collapsed' : ''}`}
       style={{
         width: isCollapsed ? 'var(--sidebar-collapsed)' : 'var(--sidebar-width)',
@@ -75,7 +77,8 @@ const Sidebar = ({ activePage, setActivePage }) => {
         {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
       </button>
 
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         .menu-item:hover {
           color: var(--accent-color) !important;
           background: rgba(0, 242, 255, 0.03) !important;

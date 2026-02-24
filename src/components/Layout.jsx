@@ -5,7 +5,7 @@ import Topbar from './Topbar';
 const Layout = ({ children, activePage, setActivePage, language, setLanguage }) => {
     return (
         <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--bg-color)' }}>
-            <Sidebar activePage={activePage} setActivePage={setActivePage} />
+            <Sidebar activePage={activePage} setActivePage={setActivePage} language={language} />
 
             <div style={{
                 flex: 1,
