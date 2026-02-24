@@ -1,49 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import {
-    Search, Loader2, Thermometer, Droplets, Sun, Zap,
-    Utensils, Heart, Pipette, Sprout, Maximize,
-    Calendar, Scissors, Database
-} from 'lucide-react';
+import { Search, Loader2, Database } from 'lucide-react';
 import { translations } from '../lib/translations';
 import { getPlantTabDetails } from '../lib/gemini';
+import { renderValue } from './PlantDetailUtils';
 
-const renderValue = (val, fallback = '---') => {
-    if (!val) return fallback;
-    if (typeof val === 'string') return val;
-    if (Array.isArray(val)) return val.join(', ');
-    if (typeof val === 'object') return JSON.stringify(val);
-    return String(val);
-};
-
-const getToxicityColor = (level) => {
-    switch (level) {
-        case 1:
-            return '#2ecc71'; // verde
-        case 2:
-            return '#a3e635'; // verde claro
-        case 3:
-            return '#facc15'; // amarelo
-        case 4:
-            return '#f97316'; // laranja
-        case 5:
-            return '#ef4444'; // vermelho
-        default:
-            return 'var(--text-primary)';
-    }
-};
-
-const MetricBox = ({ icon: Icon, label, value }) => {
-    if (!Icon) return null;
-    return (
-        <div className="glass-panel" style={{ padding: '15px', borderLeft: '2px solid var(--accent-color)', height: '100%' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                <Icon size={14} color="var(--accent-color)" />
-                <span className="mono" style={{ fontSize: '0.6rem', color: 'var(--text-secondary)', letterSpacing: '1px' }}>{label}</span>
-            </div>
-            <div style={{ fontSize: '1rem', color: 'var(--text-primary)', lineHeight: '1.2' }}>{renderValue(value)}</div>
-        </div>
-    );
-};
+// Import Tab Components
+import GeneralTab from './tabs/GeneralTab';
+import BotanyTab from './tabs/BotanyTab';
+import CulinaryTab from './tabs/CulinaryTab';
+import MedicalTab from './tabs/MedicalTab';
+import CultivationTab from './tabs/CultivationTab';
 
 const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) => {
     const t = translations[language] || translations.en;
@@ -124,6 +90,23 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
         { id: 'medical', label: t.tabs.terapeutico },
         { id: 'cultivation', label: t.tabs.cultivo }
     ];
+
+    const renderTabContent = () => {
+        switch (activeTab) {
+            case 'general':
+                return <GeneralTab data={currentData} t={t} />;
+            case 'botany':
+                return <BotanyTab data={currentData} t={t} />;
+            case 'culinary':
+                return <CulinaryTab data={currentData} t={t} />;
+            case 'medical':
+                return <MedicalTab data={currentData} t={t} />;
+            case 'cultivation':
+                return <CultivationTab data={currentData} t={t} />;
+            default:
+                return null;
+        }
+    };
 
     return (
         <div className="plant-detail" style={{ animation: 'fadeIn 0.5s ease' }}>
@@ -281,164 +264,7 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
                             </div>
                         ) : (
                             <div key={activeTab} style={{ animation: 'fadeIn 0.3s ease' }}>
-                                {activeTab === 'general' && (
-                                    <>
-                                        <div style={{ color: 'var(--text-secondary)' }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                                                <Database size={16} color="var(--accent-color)" />
-                                                <span className="mono" style={{ fontSize: '0.8rem', letterSpacing: '1px' }}>{t.tabs.description.toUpperCase()}</span>
-                                            </div>
-                                            <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: '1.7', marginBottom: '40px', maxWidth: '800px' }}>
-                                                {renderValue(currentData.description, 'NO DESCRIPTION AVAILABLE.')}
-                                            </p>
-                                        </div>
-
-                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '15px' }}>
-                                            <MetricBox icon={Thermometer} label={t.metrics.tempRange} value={currentData.metadata?.temperature} />
-                                            <MetricBox icon={Droplets} label={t.metrics.hydration} value={currentData.metadata?.humidity} />
-                                            <div className="glass-panel" style={{ padding: '15px', borderLeft: '2px solid #ffb700', height: '100%' }}>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                                                    <Sun size={14} color="#ffb700" />
-                                                    <span className="mono" style={{ fontSize: '0.6rem', color: 'var(--text-secondary)', letterSpacing: '1px' }}>{t.metrics.luxExposure}</span>
-                                                </div>
-                                                <div style={{ fontSize: '1rem', color: 'var(--text-primary)', lineHeight: '1.2' }}>{currentData.metadata?.light}</div>
-                                            </div>
-                                            <div className="glass-panel" style={{ padding: '15px', borderLeft: '2px solid #FA4E67', height: '100%' }}>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                                                    <Zap size={14} color="#FA4E67" />
-                                                    <span className="mono" style={{ fontSize: '0.6rem', color: 'var(--text-secondary)', letterSpacing: '1px' }}>{t.metrics.bioToxicity}</span>
-                                                </div>
-                                                <div
-                                                    style={{
-                                                        fontSize: '0.7rem',
-                                                        color: getToxicityColor(currentData.metadata?.toxicity_level),
-                                                        lineHeight: '1.2'
-                                                    }}
-                                                >
-                                                    {t.metrics.toxicityLevel}: {currentData.metadata?.toxicity_level}
-                                                </div>
-                                                <div style={{ fontSize: '1rem', color: 'var(--text-primary)', lineHeight: '1.2' }}>{currentData.metadata?.toxicity}</div>
-                                            </div>
-
-                                        </div>
-                                    </>
-                                )}
-
-
-
-                                {activeTab === 'botany' && (
-                                    <div style={{ display: 'grid', gap: '30px' }}>
-                                        <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
-                                            <div className="mono" style={{ background: 'rgba(0,242,255,0.1)', color: 'var(--accent-color)', padding: '10px 20px', fontSize: '0.8rem', border: '1px solid rgba(0,242,255,0.2)' }}>
-                                                CLASS: {currentData.class?.toUpperCase() || 'UNKNOWN'}
-                                            </div>
-                                            <div className="mono" style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--text-secondary)', padding: '10px 20px', fontSize: '0.8rem', border: '1px solid rgba(255,255,255,0.1)' }}>
-                                                ORDER: {currentData.order?.toUpperCase() || 'UNKNOWN'}
-                                            </div>
-                                            <div className="mono" style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--text-secondary)', padding: '10px 20px', fontSize: '0.8rem', border: '1px solid rgba(255,255,255,0.1)' }}>
-                                                FAMILY: {currentData.family?.toUpperCase() || 'UNKNOWN'}
-                                            </div>
-                                            <div className="mono" style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--text-secondary)', padding: '10px 20px', fontSize: '0.8rem', border: '1px solid rgba(255,255,255,0.1)' }}>
-                                                GENUS: {currentData.genus?.toUpperCase() || 'UNKNOWN'}
-                                            </div>
-                                        </div>
-                                        <div className="glass-panel" style={{ padding: '20px' }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                                                <Maximize size={16} color="var(--accent-color)" />
-                                                <span className="mono" style={{ fontSize: '0.7rem', color: '#ffb700', letterSpacing: '1px' }}>{t.metrics.specimenSize}</span>
-                                            </div>
-                                            <div style={{ fontSize: '0.8rem', color: 'var(--text-primary)' }}>{renderValue(currentData.size)}</div>
-                                        </div>
-                                        <div className="glass-panel" style={{ padding: '20px' }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                                                <Zap size={16} color="var(--accent-color)" />
-                                                <span className="mono" style={{ fontSize: '0.7rem', color: '#ffb700', letterSpacing: '1px' }}>{t.metrics.bioToxicity}</span>
-                                            </div>
-                                            <div style={{ fontSize: '0.8rem', color: 'var(--text-primary)' }}> <span className="mono" style={{ fontSize: '0.7rem', color: '#00ff91ff', letterSpacing: '1px' }}>Foliage:</span> {renderValue(currentData.foliage)}</div>
-                                            <div style={{ fontSize: '0.8rem', color: 'var(--text-primary)' }}> <span className="mono" style={{ fontSize: '0.7rem', color: '#00ff91ff', letterSpacing: '1px' }}>Seed:</span> {renderValue(currentData.seed)}</div>
-                                            <div style={{ fontSize: '0.8rem', color: 'var(--text-primary)' }}> <span className="mono" style={{ fontSize: '0.7rem', color: '#00ff91ff', letterSpacing: '1px' }}>Flower:</span> {renderValue(currentData.flower)}</div>
-                                            <div style={{ fontSize: '0.8rem', color: 'var(--text-primary)' }}> <span className="mono" style={{ fontSize: '0.7rem', color: '#00ff91ff', letterSpacing: '1px' }}>fruit:</span> {renderValue(currentData.fruit)}</div>
-                                            <div style={{ fontSize: '0.8rem', color: 'var(--text-primary)' }}> <span className="mono" style={{ fontSize: '0.7rem', color: '#00ff91ff', letterSpacing: '1px' }}>Root:</span> {renderValue(currentData.root)}</div>
-                                            <div style={{ fontSize: '0.8rem', color: 'var(--text-primary)' }}> <span className="mono" style={{ fontSize: '0.7rem', color: '#00ff91ff', letterSpacing: '1px' }}>Stem:</span> {renderValue(currentData.stem)}</div>
-                                            <div style={{ fontSize: '0.8rem', color: 'var(--text-primary)' }}> <span className="mono" style={{ fontSize: '0.7rem', color: '#00ff91ff', letterSpacing: '1px' }}>Fragrance:</span> {renderValue(currentData.fragrance)}</div>
-                                            <div style={{ fontSize: '0.8rem', color: 'var(--text-primary)' }}> <span className="mono" style={{ fontSize: '0.7rem', color: '#00ff91ff', letterSpacing: '1px' }}>Leaves:</span> {renderValue(currentData.leaves)}</div>
-                                            <div style={{ fontSize: '0.8rem', color: 'var(--text-primary)' }}> <span className="mono" style={{ fontSize: '0.7rem', color: '#00ff91ff', letterSpacing: '1px' }}>Pollination Type:</span> {renderValue(currentData.pollinationType)}</div>
-                                            <div style={{ fontSize: '0.8rem', color: 'var(--text-primary)' }}> <span className="mono" style={{ fontSize: '0.7rem', color: '#00ff91ff', letterSpacing: '1px' }}>Plant Type:</span> {renderValue(currentData.plantType)}</div>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {activeTab === 'culinary' && (
-                                    <div className="glass-panel" style={{ padding: '30px' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-                                            <Utensils size={24} color="var(--accent-color)" />
-                                            <h3 className="mono" style={{ margin: 0, fontSize: '1rem', letterSpacing: '2px' }}>CULINARY USE ARCHIVE</h3>
-                                        </div>
-                                        <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', lineHeight: '1.8' }}>
-                                            {renderValue(currentData.culinary_use, 'NO DATA AVAILABLE FOR CULINARY APPLICATIONS.')}
-                                        </p>
-                                    </div>
-                                )}
-
-                                {activeTab === 'medical' && (
-                                    <div style={{ display: 'grid', gap: '20px' }}>
-                                        <div className="glass-panel" style={{ padding: '30px' }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-                                                <Heart size={24} color="#ff3e3e" />
-                                                <h3 className="mono" style={{ margin: 0, fontSize: '1rem', letterSpacing: '2px' }}>MEDICAL_BENEFITS</h3>
-                                            </div>
-                                            <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', lineHeight: '1.8' }}>
-                                                {renderValue(currentData.therapeutic_use, 'NO DATA AVAILABLE FOR MEDICINAL APPLICATIONS.')}
-                                            </p>
-                                        </div>
-                                        {currentData.oils_and_florals && currentData.oils_and_florals !== 'None' && (
-                                            <div className="glass-panel" style={{ padding: '30px', borderLeft: '4px solid #ffb700' }}>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '15px' }}>
-                                                    <Pipette size={20} color="#ffb700" />
-                                                    <h4 className="mono" style={{ margin: 0, fontSize: '0.9rem' }}>ESSENCES & OILS</h4>
-                                                </div>
-                                                <p style={{ color: 'var(--text-secondary)', margin: 0 }}>
-                                                    {renderValue(currentData.oils_and_florals)}
-                                                </p>
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-
-                                {activeTab === 'cultivation' && (
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '20px' }}>
-                                        <div className="glass-panel" style={{ padding: '30px' }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '15px' }}>
-                                                <Sprout size={24} color="var(--accent-color)" />
-                                                <h3 className="mono" style={{ margin: 0, fontSize: '1rem' }}>CULTIVATION_PROTOCOL</h3>
-                                            </div>
-                                            <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: '1.7' }}>
-                                                {renderValue(currentData.cultivation, '---')}
-                                            </p>
-                                        </div>
-                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '15px' }}>
-                                            <MetricBox icon={Thermometer} label="TEMP" value={currentData.metadata?.temperature} />
-                                            <MetricBox icon={Droplets} label="HUMIDITY" value={currentData.metadata?.humidity} />
-                                            <MetricBox icon={Sun} label="LIGHT" value={currentData.metadata?.light} />
-                                        </div>
-                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                                            <div className="glass-panel" style={{ padding: '20px' }}>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                                                    <Scissors size={16} color="var(--accent-color)" />
-                                                    <span className="mono" style={{ fontSize: '0.7rem', color: '#ffb700' }}>{t.metrics.pruning}</span>
-                                                </div>
-                                                <div style={{ fontSize: '1rem' }}>{renderValue(currentData.pruning, '---')}</div>
-                                            </div>
-                                            <div className="glass-panel" style={{ padding: '20px' }}>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                                                    <Calendar size={16} color="var(--accent-color)" />
-                                                    <span className="mono" style={{ fontSize: '0.7rem', color: '#ffb700' }}>{t.metrics.plantingSeason}</span>
-                                                </div>
-                                                <div style={{ fontSize: '1rem' }}>{currentData.planting_season || '---'}</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
+                                {renderTabContent()}
                             </div>
                         )}
                     </div>
