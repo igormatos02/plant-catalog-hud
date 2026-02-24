@@ -111,11 +111,9 @@ export const getPlantTabDetails = async (scientificName, tabId, language = 'en')
 
     let tabPrompt = "";
     switch (tabId) {
-        case 'varieties':
-            tabPrompt = `List known specimen varieties for "${scientificName}" in ${langName}. Return a JSON object with a single string field "varieties".`;
-            break;
+
         case 'botany':
-            tabPrompt = `Provide taxonomical and physical details for "${scientificName}". Return a JSON object with: "class", "family", "order", "genus", "foliage", "flower", "fruit", "seed","root", "stem","fragrance", "leaves","pollinationType","plantType","size" (max dimensions in meters, cm). All text in ${langName}.`;
+            tabPrompt = `Provide taxonomical and physical details for "${scientificName}". Return a JSON object with: "botanical_description" (a concise summary of botanical features), "foliage", "flower", "fruit", "seed","root", "stem","fragrance", "leaves","pollinationType","plantType","size" (max dimensions in meters, cm). All text in ${langName}.`;
             break;
         case 'culinary':
             tabPrompt = `Provide specific culinary applications for "${scientificName}" in ${langName}. Return a JSON object with field "culinary_use".`;
