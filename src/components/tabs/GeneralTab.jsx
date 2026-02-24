@@ -25,19 +25,26 @@ const GeneralTab = ({ data, t }) => {
                     </div>
                     <div style={{ fontSize: '1rem', color: 'var(--text-primary)', lineHeight: '1.2' }}>{renderValue(data.metadata?.light)}</div>
                 </div>
-                <div className="glass-panel" style={{ padding: '15px', borderLeft: '2px solid #FA4E67', height: '100%' }}>
+                <div className="glass-panel" style={{
+                    padding: '15px',
+                    borderLeft: `2px solid ${getToxicityColor(data.metadata?.toxicity_level)}`,
+                    height: '100%'
+                }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                        <Zap size={14} color="#FA4E67" />
+                        <Zap size={14} color={getToxicityColor(data.metadata?.toxicity_level)} />
                         <span className="mono" style={{ fontSize: '0.6rem', color: 'var(--text-secondary)', letterSpacing: '1px' }}>{t.metrics.bioToxicity}</span>
                     </div>
                     <div
                         style={{
                             fontSize: '0.7rem',
-                            color: getToxicityColor(data.metadata?.toxicity_level),
-                            lineHeight: '1.2'
+                            lineHeight: '1.2',
+                            marginBottom: '4px'
                         }}
                     >
-                        {t.metrics.toxicityLevel}: {renderValue(data.metadata?.toxicity_level)}
+                        <span className="mono" style={{ color: 'var(--text-secondary)' }}>{t.metrics.toxicityLevel}: </span>
+                        <span className="mono" style={{ color: getToxicityColor(data.metadata?.toxicity_level) }}>
+                            {renderValue(data.metadata?.toxicity_level)}
+                        </span>
                     </div>
                     <div style={{ fontSize: '1rem', color: 'var(--text-primary)', lineHeight: '1.2' }}>{renderValue(data.metadata?.toxicity)}</div>
                 </div>

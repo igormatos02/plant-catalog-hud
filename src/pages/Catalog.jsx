@@ -59,29 +59,41 @@ const Catalog = ({ language }) => {
 
                 // PHASE 2: Specimen Identification & Visualization
                 try {
-                    // 1. Align with PlantNet to get GBIF ID and validated scientific name
                     const alignment = await alignSpecies(scientificName);
                     const firstVariety = geminiDetails.varieties?.[0];
                     if (alignment && alignment.gbifId) {
-                        // 2. Fetch real specimen imagery from GBIF
-                        const realImageUrl = await fetchSpecimenImage(alignment.gbifId, firstVariety);
-                        if (realImageUrl) {
+                        const realImageUrls = await fetchSpecimenImage(alignment.gbifId, firstVariety);
+                        if (realImageUrls && realImageUrls.length > 0) {
                             setSelectedPlant(prev => prev ? {
                                 ...prev,
-                                picture_url: realImageUrl
-
+                                picture_url: realImageUrls[0],
+                                picture_urls: realImageUrls
                             } : null);
                         } else {
-                            // Fallback to LoremFlickr if no GBIF image found
-                            setSelectedPlant(prev => prev ? { ...prev, picture_url: `https://loremflickr.com/1024/1024/${encodeURIComponent(scientificName)},plant` } : null);
+                            // Fallback to LoremFlickr
+                            const fallback = `https://loremflickr.com/1024/1024/${encodeURIComponent(scientificName)},plant`;
+                            setSelectedPlant(prev => prev ? {
+                                ...prev,
+                                picture_url: fallback,
+                                picture_urls: [fallback]
+                            } : null);
                         }
                     } else {
-                        // Fallback to LoremFlickr if alignment fails
-                        setSelectedPlant(prev => prev ? { ...prev, picture_url: `https://loremflickr.com/1024/1024/${encodeURIComponent(scientificName)},plant` } : null);
+                        const fallback = `https://loremflickr.com/1024/1024/${encodeURIComponent(scientificName)},plant`;
+                        setSelectedPlant(prev => prev ? {
+                            ...prev,
+                            picture_url: fallback,
+                            picture_urls: [fallback]
+                        } : null);
                     }
                 } catch (err) {
                     console.error("Identification phase failure:", err);
-                    setSelectedPlant(prev => prev ? { ...prev, picture_url: `https://loremflickr.com/1024/1024/${encodeURIComponent(scientificName)},plant` } : null);
+                    const fallback = `https://loremflickr.com/1024/1024/${encodeURIComponent(scientificName)},plant`;
+                    setSelectedPlant(prev => prev ? {
+                        ...prev,
+                        picture_url: fallback,
+                        picture_urls: [fallback]
+                    } : null);
                 } finally {
                     setIsGeneratingImage(false);
                 }

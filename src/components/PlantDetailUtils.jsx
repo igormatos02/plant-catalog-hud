@@ -9,19 +9,20 @@ export const renderValue = (val, fallback = '---') => {
 };
 
 export const getToxicityColor = (level) => {
-    switch (level) {
+    const lvl = Number(level);
+    switch (lvl) {
         case 1:
-            return '#2ecc71'; // verde
+            return '#00ff9d'; // Neon Green
         case 2:
-            return '#a3e635'; // verde claro
+            return '#a3e635'; // Lime Green
         case 3:
-            return '#facc15'; // amarelo
+            return '#facc15'; // Cyber Yellow
         case 4:
-            return '#f97316'; // laranja
+            return '#fb923c'; // Neon Orange
         case 5:
-            return '#ef4444'; // vermelho
+            return '#fa4e67'; // Cyber Red/Pink (Design Match)
         default:
-            return 'var(--text-primary)';
+            return 'var(--text-secondary)';
     }
 };
 

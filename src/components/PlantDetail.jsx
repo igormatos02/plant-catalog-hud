@@ -10,6 +10,7 @@ import BotanyTab from './tabs/BotanyTab';
 import CulinaryTab from './tabs/CulinaryTab';
 import MedicalTab from './tabs/MedicalTab';
 import CultivationTab from './tabs/CultivationTab';
+import SpecimenCarousel from './SpecimenCarousel';
 
 const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) => {
     const t = translations[language] || translations.en;
@@ -28,10 +29,12 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
     }, [plant?.scientific_name]);
 
     useEffect(() => {
-        if (plant?.picture_url) {
+        if (!isGeneratingImage && (plant?.picture_url || plant?.picture_urls)) {
+            setImageLoaded(true);
+        } else if (isGeneratingImage) {
             setImageLoaded(false);
         }
-    }, [plant?.picture_url]);
+    }, [isGeneratingImage, plant?.picture_url, plant?.picture_urls]);
 
     const handleTabChange = async (tabId) => {
         setActiveTab(tabId);
@@ -129,53 +132,30 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
             </button>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1fr) 1.5fr', gap: '40px' }}>
-                {/* Left Col: Image */}
+                {/* Left Col: Image / Carousel */}
                 <div style={{ position: 'relative', height: 'fit-content' }}>
-                    <div className="hud-border" style={{ padding: '4px', background: 'var(--accent-color)', position: 'relative', overflow: 'hidden' }}>
-                        {showImageLoading && (
-                            <div style={{
-                                height: '100%',
-                                width: '100%',
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                zIndex: 10,
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                background: 'rgba(5, 12, 16, 0.9)',
-                                backdropFilter: 'blur(10px)',
-                                minHeight: '400px'
-                            }}>
-                                <Loader2 className="animate-spin" size={32} color="var(--accent-color)" />
-                                <p className="mono" style={{ marginTop: '15px', fontSize: '0.7rem', color: 'var(--accent-color)', letterSpacing: '2px', textAlign: 'center', padding: '0 20px' }}>
-                                    {isGeneratingImage ? "SYNCHRONIZING WITH PLANTNET ARCHIVE..." : "RETRIEVING SPECIMEN IMAGERY..."}
-                                </p>
-                            </div>
-                        )}
-                        {plant.picture_url && (
-                            <img
-                                src={plant.picture_url}
-                                alt={plant.name}
-                                onLoad={() => setImageLoaded(true)}
-                                onError={() => setImageLoaded(true)}
-                                style={{
-                                    width: '100%',
-                                    display: 'block',
-                                    filter: 'grayscale(0.1) contrast(1.1)',
-                                    animation: 'fadeIn 0.8s ease',
-                                    opacity: imageLoaded ? 1 : 0
-                                }}
-                            />
-                        )}
-
-                        {!plant.picture_url && !isGeneratingImage && (
-                            <div style={{ height: '400px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.02)' }}>
-                                <Database size={32} color="var(--text-secondary)" opacity={0.3} />
-                            </div>
-                        )}
-                    </div>
+                    {showImageLoading ? (
+                        <div className="hud-border" style={{
+                            padding: '4px',
+                            background: 'var(--accent-color)',
+                            position: 'relative',
+                            overflow: 'hidden',
+                            minHeight: '400px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            background: 'rgba(5, 12, 16, 0.9)',
+                            backdropFilter: 'blur(10px)'
+                        }}>
+                            <Loader2 className="animate-spin" size={32} color="var(--accent-color)" />
+                            <p className="mono" style={{ marginTop: '15px', fontSize: '0.7rem', color: 'var(--accent-color)', letterSpacing: '2px', textAlign: 'center', padding: '0 20px' }}>
+                                {isGeneratingImage ? "SYNCHRONIZING WITH PLANTNET ARCHIVE..." : "RETRIEVING SPECIMEN IMAGERY..."}
+                            </p>
+                        </div>
+                    ) : (
+                        <SpecimenCarousel images={plant.picture_urls || [plant.picture_url]} name={plant.scientific_name} />
+                    )}
                 </div>
 
                 {/* Right Col: Data */}
