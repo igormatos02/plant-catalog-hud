@@ -5,7 +5,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(API_KEY || "DUMMY_KEY");
 
-const getModel = (name = "gemini-2.5-flash") => genAI.getGenerativeModel({ model: name });
+const getModel = (name = "gemini-flash-latest") => genAI.getGenerativeModel({ model: name });
 
 const getLanguageName = (code) => {
     switch (code) {
@@ -13,11 +13,12 @@ const getLanguageName = (code) => {
         case 'fi': return 'Finnish';
         case 'de': return 'German';
         case 'uk': return 'Ukrainian';
+        case 'my': return 'Myanmar (Burmese)';
         default: return 'English';
     }
 };
 
-export const searchPlants = async (query, language = 'en') => {
+export const searchPlants = async (query, language = import.meta.env.VITE_DEFAULT_LANGUAGE || 'en') => {
     if (!API_KEY) {
         console.error("[Gemini] API Key missing. Please set VITE_GEMINI_API_KEY in .env");
         return [];
@@ -37,7 +38,7 @@ export const searchPlants = async (query, language = 'en') => {
     - "scientific_name" (complete scientific name)
     Only return the JSON array, no other text.`;
 
-    const modelsToTry = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-pro"];
+    const modelsToTry = ["gemini-flash-latest", "gemini-2.0-flash", "gemini-pro-latest"];
 
     for (const modelName of modelsToTry) {
         try {
@@ -57,7 +58,7 @@ export const searchPlants = async (query, language = 'en') => {
     return [];
 };
 
-export const getPlantDetails = async (scientificName, language = 'en') => {
+export const getPlantDetails = async (scientificName, language = import.meta.env.VITE_DEFAULT_LANGUAGE || 'en') => {
     if (!API_KEY) return null;
 
     const langName = getLanguageName(language);
@@ -81,9 +82,17 @@ export const getPlantDetails = async (scientificName, language = 'en') => {
         - toxicity: safety level or toxicity notes.
         - toxicity_level: Level (1-5 [1=non-toxic, 2=mildly toxic, 3=moderately toxic, 4=highly toxic, 5=lethal])
         - type: type of plant and life cicle[anual, perene, bienal] (in ${langName}).
+    - lifecycle: A JSON array of exactly 12 objects, one for each month (January to December). Each object must have:
+        - month: The name of the month (in ${langName}).
+        - fructification: Intensity of fruiting (0 to 10).
+        - flowering: Intensity of flowering (0 to 10).
+        - foliage: Intensity of leaf growth/dropping (0 to 10, where 10 is max growth, 0 is total drop).
+        - pruning: Recommended pruning intensity (0 to 10).
+        - is_rain_season: Boolean (true if this month is typically part of the rain season for this specimen).
+        - is_sun_season: Boolean (true if this month is typically part of the sun/dry season).
     Only return the JSON object, no other text.`;
 
-    const modelsToTry = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-pro"];
+    const modelsToTry = ["gemini-flash-latest", "gemini-2.0-flash", "gemini-pro-latest"];
 
     for (const modelName of modelsToTry) {
         try {
@@ -104,7 +113,7 @@ export const getPlantDetails = async (scientificName, language = 'en') => {
     return null;
 };
 
-export const getPlantTabDetails = async (scientificName, tabId, language = 'en') => {
+export const getPlantTabDetails = async (scientificName, tabId, language = import.meta.env.VITE_DEFAULT_LANGUAGE || 'en') => {
     if (!API_KEY) return null;
 
     const langName = getLanguageName(language);
@@ -130,7 +139,7 @@ export const getPlantTabDetails = async (scientificName, tabId, language = 'en')
 
     const prompt = `Act as a botanical expert. ${tabPrompt} Only return the JSON object, no other text.`;
 
-    const modelsToTry = ["gemini-2.5-flash", "gemini-1.5-flash"];
+    const modelsToTry = ["gemini-flash-latest", "gemini-2.0-flash"];
 
     for (const modelName of modelsToTry) {
         try {

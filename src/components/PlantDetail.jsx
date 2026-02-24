@@ -11,6 +11,7 @@ import CulinaryTab from './tabs/CulinaryTab';
 import MedicalTab from './tabs/MedicalTab';
 import CultivationTab from './tabs/CultivationTab';
 import SpecimenCarousel from './SpecimenCarousel';
+import LifecycleChart from './LifecycleChart';
 
 const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) => {
     const t = translations[language] || translations.en;
@@ -155,6 +156,11 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
                         </div>
                     ) : (
                         <SpecimenCarousel images={plant.picture_urls || [plant.picture_url]} name={plant.scientific_name} />
+                    )}
+
+                    {/* Chart below image */}
+                    {!isLoading && plant.lifecycle && (
+                        <LifecycleChart data={plant.lifecycle} />
                     )}
                 </div>
 

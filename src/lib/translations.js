@@ -35,7 +35,13 @@ export const translations = {
             toxicityLevel: "TOXICITY_LEVEL",
             specimenSize: "SPECIMEN SIZE",
             pruning: "PRUNING",
-            plantingSeason: "PLANTING SEASON"
+            plantingSeason: "PLANTING SEASON",
+            caution: "CAUTION",
+            danger: "DANGER"
+        },
+        warnings: {
+            culinary: "INGESTION_HAZARD: NOT SUITABLE FOR HUMAN CONSUMPTION.",
+            medical: "PHARMACOLOGICAL_HAZARD: EXTREME CAUTION. POTENTIAL TOXICITY."
         }
     },
     pt: {
@@ -49,7 +55,7 @@ export const translations = {
         placeholder: "INSIRA O NOME DO ESPÉCIME OU TRAÇO...",
         backToSearch: "VOLTAR À PESQUISA",
         initiatingDiscovery: "INICIANDO DESCOBERTA DE ARQUIVO GLOBAL...",
-        aiProcessing: "MOTOR_IA: PROCESSANDO CONSULTA BOTÂNICA",
+        aiProcessing: "MOTOR: PROCESSANDO CONSULTA BOTÂNICA",
         decryptingSpecimen: "LINK NEURAL ESTABELECIDO: DESCRIPTOGRAFANDO DADOS DO ESPÉCIME...",
         tabs: {
             geral: "Geral",
@@ -74,7 +80,13 @@ export const translations = {
             toxicityLevel: "NIVEL DE TOXICIDADE",
             specimenSize: "TAMANHO DO ESPÉCIME",
             pruning: "PODA",
-            plantingSeason: "ESTAÇÃO DE PLANTIO"
+            plantingSeason: "ESTAÇÃO DE PLANTIO",
+            caution: "CUIDADO",
+            danger: "PERIGO"
+        },
+        warnings: {
+            culinary: "PERIGO DE INGESTÃO: NÃO ADEQUADA PARA CONSUMO HUMANO.",
+            medical: "RISCO FARMACOLÓGICO: CUIDADO EXTREMO. POTENCIAL TOXICIDADE."
         }
     },
     fi: {
@@ -113,7 +125,13 @@ export const translations = {
             toxicityLevel: "MYRKYLLISYYS",
             specimenSize: "NÄYTTEEN KOKO",
             pruning: "LEIKKAUS",
-            plantingSeason: "ISTUTUSKAUSI"
+            plantingSeason: "ISTUTUSKAUSI",
+            caution: "VAROITUS",
+            danger: "VAARA"
+        },
+        warnings: {
+            culinary: "NIELEMISVAARA: EI SOVELLU IHMIS RAVINNOKSI.",
+            medical: "FARMAKOLOGINEN VAARA: ERITYISTÄ VAROVAISUUTTA NOUDETETTAVA."
         }
     },
     de: {
@@ -152,7 +170,13 @@ export const translations = {
             toxicityLevel: "TOXIZITÄTSSTUFE",
             specimenSize: "GRÖSSE",
             pruning: "BESCHNITT",
-            plantingSeason: "PFLANZZEIT"
+            plantingSeason: "PFLANZZEIT",
+            caution: "VORSICHT",
+            danger: "GEFAHR"
+        },
+        warnings: {
+            culinary: "VERSCHLUCKUNGSGEFAHR: NICHT FÜR DEN MENSCHLICHEN VERZEHR GEEIGNET.",
+            medical: "PHARMAKOLOGISCHE GEFAHR: EXTREME VORSICHT GEBOTEN."
         }
     },
     uk: {
@@ -191,7 +215,13 @@ export const translations = {
             toxicityLevel: "РІВЕНЬ_ТОКСИЧНОСТІ",
             specimenSize: "РОЗМІР ЗРАЗКА",
             pruning: "ОБРІЗКА",
-            plantingSeason: "СЕЗОН ПОСАДКИ"
+            plantingSeason: "СЕЗОН ПОСАДКИ",
+            caution: "ОБЕРЕЖНО",
+            danger: "НЕБЕЗПЕКА"
+        },
+        warnings: {
+            culinary: "НЕБЕЗПЕКА КОВТАННЯ: НЕ ПРИДАТНО ДЛЯ СПОЖИВАННЯ ЛЮДИНОЮ.",
+            medical: "ФАРМАКОЛОГІЧНА НЕБЕЗПЕКА: ПОТРІБНА ОБЕРЕЖНІСТЬ."
         }
     },
     my: {
@@ -230,7 +260,13 @@ export const translations = {
             toxicityLevel: "အဆိပ်အတောက်အဆင့်",
             specimenSize: "နမူနာအရွယ်အစား",
             pruning: "ကိုင်းဖြတ်ခြင်း",
-            plantingSeason: "စိုက်ပျိုးရာသီ"
+            plantingSeason: "စိုက်ပျိုးရာသီ",
+            caution: "သတိပြုရန်",
+            danger: "အန္တရာယ်ရှိသည်"
+        },
+        warnings: {
+            culinary: "မျိုချမိပါက အန္တရာယ်ရှိသည်- စားသုံးရန် မသင့်တော်ပါ။",
+            medical: "ဆေးဝါးဗေဒဆိုင်ရာ အန္တရာယ်- အထူးသတိပြုရန် လိုအပ်သည်။"
         }
     }
 };

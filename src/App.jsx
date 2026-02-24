@@ -5,7 +5,7 @@ import About from './pages/About';
 
 function App() {
   const [activePage, setActivePage] = useState('catalog');
-  const [language, setLanguage] = useState('en'); // en, pt, fi
+  const [language, setLanguage] = useState(import.meta.env.VITE_DEFAULT_LANGUAGE || 'en'); // en, pt, fi, de, uk, my
 
   return (
     <Layout

@@ -50,7 +50,8 @@ const Catalog = ({ language }) => {
                     picture_url: null, // Image will be generated in Phase 2
                     metadata: geminiDetails.metadata,
                     varieties: geminiDetails.varieties,
-                    gbifId: geminiDetails.metadata.gbifId
+                    gbifId: geminiDetails.metadata.gbifId,
+                    lifecycle: geminiDetails.lifecycle
                 };
 
                 setSelectedPlant(basePlant);

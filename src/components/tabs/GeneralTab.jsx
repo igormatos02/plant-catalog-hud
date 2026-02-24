@@ -5,15 +5,16 @@ import { renderValue, MetricBox, getToxicityColor } from '../PlantDetailUtils';
 const GeneralTab = ({ data, t }) => {
     return (
         <>
-            <div style={{ color: 'var(--text-secondary)' }}>
+            <div className="glass-panel" style={{ padding: '30px', marginBottom: '10px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                    <Database size={16} color="var(--accent-color)" />
+                    <Database size={24} color="var(--accent-color)" />
                     <span className="mono" style={{ fontSize: '0.8rem', letterSpacing: '1px' }}>{t.tabs.description.toUpperCase()}</span>
                 </div>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: '1.7', marginBottom: '40px', maxWidth: '800px' }}>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: '1.7', marginBottom: '40px' }}>
                     {renderValue(data.description, 'NO DESCRIPTION AVAILABLE.')}
                 </p>
             </div>
+
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '15px' }}>
                 <MetricBox icon={Thermometer} label={t.metrics.tempRange} value={data.metadata?.temperature} />
