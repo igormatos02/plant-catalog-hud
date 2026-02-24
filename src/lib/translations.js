@@ -42,6 +42,29 @@ export const translations = {
         warnings: {
             culinary: "INGESTION_HAZARD: NOT SUITABLE FOR HUMAN CONSUMPTION.",
             medical: "PHARMACOLOGICAL_HAZARD: EXTREME CAUTION. POTENTIAL TOXICITY."
+        },
+        culinaryParts: {
+            leaves: "Leaves",
+            seeds: "Seeds",
+            fruits: "Fruits",
+            stem: "Stem or Trunk",
+            tea: "Tea",
+            oil: "Oil"
+        },
+        subproducts: {
+            tea: "Medicinal Tea",
+            perfume: "Perfume",
+            soap: "Soap",
+            sachets: "Sachets",
+            others: "Other Subproducts"
+        },
+        cultivationLabels: {
+            soil: "Soil & Mixture",
+            drainage: "Drainage Control",
+            propagation: "Propagation (Cuttings/Seeds)",
+            symbiosis: "Companion Plants",
+            protection: "Environmental Protection",
+            pruning: "Pruning Method"
         }
     },
     pt: {
@@ -87,6 +110,29 @@ export const translations = {
         warnings: {
             culinary: "PERIGO DE INGESTÃO: NÃO ADEQUADA PARA CONSUMO HUMANO.",
             medical: "RISCO FARMACOLÓGICO: CUIDADO EXTREMO. POTENCIAL TOXICIDADE."
+        },
+        culinaryParts: {
+            leaves: "Folhas",
+            seeds: "Sementes",
+            fruits: "Frutos",
+            stem: "Tronco ou Caule",
+            tea: "Chá",
+            oil: "Óleo"
+        },
+        subproducts: {
+            tea: "Chá Medicinal",
+            perfume: "Perfume",
+            soap: "Sabão",
+            sachets: "Sachês",
+            others: "Outros Subprodutos"
+        },
+        cultivationLabels: {
+            soil: "Solo e Mistura",
+            drainage: "Controle de Drenagem",
+            propagation: "Propagação (Estacas/Sementes)",
+            symbiosis: "Plantas Companheiras",
+            protection: "Proteção Ambiental",
+            pruning: "Método de Poda"
         }
     },
     fi: {
@@ -132,6 +178,29 @@ export const translations = {
         warnings: {
             culinary: "NIELEMISVAARA: EI SOVELLU IHMIS RAVINNOKSI.",
             medical: "FARMAKOLOGINEN VAARA: ERITYISTÄ VAROVAISUUTTA NOUDETETTAVA."
+        },
+        culinaryParts: {
+            leaves: "Lehdet",
+            seeds: "Siemenet",
+            fruits: "Hedelmät",
+            stem: "Varsi tai runko",
+            tea: "Tee",
+            oil: "Öljy"
+        },
+        subproducts: {
+            tea: "Lääketieteellinen tee",
+            perfume: "Hajuvesi",
+            soap: "Saippua",
+            sachets: "Tuoksupussit",
+            others: "Muut sivutuotteet"
+        },
+        cultivationLabels: {
+            soil: "Maaperä ja seos",
+            drainage: "Viemäröinnin hallinta",
+            propagation: "Lisääminen (pistikkaat/siemenet)",
+            symbiosis: "Kumppanuuskasvit",
+            protection: "Ympäristönsuojelu",
+            pruning: "Leikkausmenetelmä"
         }
     },
     de: {
@@ -175,8 +244,31 @@ export const translations = {
             danger: "GEFAHR"
         },
         warnings: {
-            culinary: "VERSCHLUCKUNGSGEFAHR: NICHT FÜR DEN MENSCHLICHEN VERZEHR GEEIGNET.",
+            culinary: "VERSCHLUCKUNGSGEFAHR: NICHT FOR DEN MENSCHLICHEN VERZEHR GEEIGNET.",
             medical: "PHARMAKOLOGISCHE GEFAHR: EXTREME VORSICHT GEBOTEN."
+        },
+        culinaryParts: {
+            leaves: "Blätter",
+            seeds: "Samen",
+            fruits: "Früchte",
+            stem: "Stamm oder Stängel",
+            tea: "Tee",
+            oil: "Öl"
+        },
+        subproducts: {
+            tea: "Arzneitee",
+            perfume: "Parfüm",
+            soap: "Seife",
+            sachets: "Duftsäckchen",
+            others: "Andere Nebenprodukte"
+        },
+        cultivationLabels: {
+            soil: "Boden & Mischung",
+            drainage: "Entwässerungskontrolle",
+            propagation: "Vermehrung (Stecklinge/Samen)",
+            symbiosis: "Begleitpflanzen",
+            protection: "Umweltschutz",
+            pruning: "Beschneidungsmethode"
         }
     },
     uk: {
@@ -222,6 +314,29 @@ export const translations = {
         warnings: {
             culinary: "НЕБЕЗПЕКА КОВТАННЯ: НЕ ПРИДАТНО ДЛЯ СПОЖИВАННЯ ЛЮДИНОЮ.",
             medical: "ФАРМАКОЛОГІЧНА НЕБЕЗПЕКА: ПОТРІБНА ОБЕРЕЖНІСТЬ."
+        },
+        culinaryParts: {
+            leaves: "Листя",
+            seeds: "Насіння",
+            fruits: "Плоди",
+            stem: "Стебло або стовбур",
+            tea: "Чай",
+            oil: "Олія"
+        },
+        subproducts: {
+            tea: "Лікувальний чай",
+            perfume: "Парфуми",
+            soap: "Мило",
+            sachets: "Саше",
+            others: "Інші субпродукти"
+        },
+        cultivationLabels: {
+            soil: "Ґрунт та суміш",
+            drainage: "Контроль дренажу",
+            propagation: "Розмноження (живці/насіння)",
+            symbiosis: "Рослини-супутники",
+            protection: "Захист довкілля",
+            pruning: "Метод обрізки"
         }
     },
     my: {
@@ -267,6 +382,29 @@ export const translations = {
         warnings: {
             culinary: "မျိုချမိပါက အန္တရာယ်ရှိသည်- စားသုံးရန် မသင့်တော်ပါ။",
             medical: "ဆေးဝါးဗေဒဆိုင်ရာ အန္တရာယ်- အထူးသတိပြုရန် လိုအပ်သည်။"
+        },
+        culinaryParts: {
+            leaves: "အရွက်များ",
+            seeds: "မျိုးစေ့များ",
+            fruits: "အသီးများ",
+            stem: "ပင်စည် သို့မဟုတ် ပင်မအကိုင်း",
+            tea: "လက်ဖက်ရည်",
+            oil: "ဆီ"
+        },
+        subproducts: {
+            tea: "ဆေးဖက်ဝင် လက်ဖက်ရည်",
+            perfume: "ရေမွှေး",
+            soap: "ဆပ်ပြာ",
+            sachets: "အမွှေးအိတ်ငယ်များ",
+            others: "အခြား ဘေးထွက်ပစ္စည်းများ"
+        },
+        cultivationLabels: {
+            soil: "မြေဆီလွှာနှင့် အရောအနှော",
+            drainage: "ရေနုတ်မြောင်း ထိန်းချုပ်မှု",
+            propagation: "မျိုးပွားခြင်း (ကိုင်းကူး/မျိုးစေ့)",
+            symbiosis: "တွဲဖက်စိုက်ပျိုးပင်များ",
+            protection: "ပတ်ဝန်းကျင် ကာကွယ်ရေး",
+            pruning: "ကိုင်းဖြတ်နည်းလမ်း"
         }
     }
 };

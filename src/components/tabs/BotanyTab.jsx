@@ -18,16 +18,16 @@ const PropertyRow = ({ icon: Icon, label, value, color = 'var(--accent-color)' }
             gap: '20px'
         }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Icon size={14} color={color} opacity={0.8} />
-                <span className="mono" style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', letterSpacing: '1px', textTransform: 'uppercase' }}>{label}</span>
+                <Icon size={12} color={color} opacity={0.8} />
+                <span className="mono" style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', letterSpacing: '1px', textTransform: 'uppercase' }}>{label}</span>
             </div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-primary)', textAlign: 'right', fontWeight: 500 }}>{renderValue(value)}</div>
+            <div style={{ fontSize: '1rem', color: 'var(--text-primary)', textAlign: 'right' }}>{renderValue(value)}</div>
         </div>
     );
 };
 
 const ArchitecturePanel = ({ data, t }) => {
-    const hasData = data.size || data.plantType || data.leaves || data.foliage || data.stem || data.root;
+    const hasData = data.plantType || data.leaves || data.foliage || data.stem || data.root;
     if (!hasData) return null;
 
     return (
@@ -36,13 +36,13 @@ const ArchitecturePanel = ({ data, t }) => {
                 <LayoutPanelLeft size={120} />
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
-                <Target size={18} color="var(--accent-color)" />
-                <h3 className="mono" style={{ margin: 0, fontSize: '0.9rem', letterSpacing: '2px' }}>SPECIMEN_ARCHITECTURE</h3>
+                <Target size={14} color="var(--accent-color)" />
+                <h3 className="mono" style={{ margin: 0, fontSize: '0.7rem', letterSpacing: '2px' }}>SPECIMEN_ARCHITECTURE</h3>
             </div>
 
-            <PropertyRow icon={Maximize} label={t.metrics.specimenSize} value={data.size} color="#ffb700" />
+
             <PropertyRow icon={Sprout} label="Growth Form" value={data.plantType} />
-            <PropertyRow icon={Leaf} label="Leaf Structure" value={data.leaves} />
+            <PropertyRow icon={Wind} label="Aromatic Profile" value={data.fragrance} color="#00f2ff" />
             <PropertyRow icon={Leaf} label="Foliage Type" value={data.foliage} />
             <PropertyRow icon={AlignLeft} label="Stem System" value={data.stem} color="#94a3b8" />
             <PropertyRow icon={ArrowDown} label="Root Network" value={data.root} color="#94a3b8" />
@@ -58,14 +58,14 @@ const BiologicalPanel = ({ data }) => {
         <div className="glass-panel" style={{ padding: '25px', borderLeft: '3px solid #00f2ff22' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
                 <Binary size={18} color="#00f2ff" />
-                <h3 className="mono" style={{ margin: 0, fontSize: '0.9rem', letterSpacing: '2px', color: '#00f2ff' }}>BIO_REPRODUCTION</h3>
+                <h3 className="mono" style={{ margin: 0, fontSize: '0.7rem', letterSpacing: '2px', color: '#00f2ff' }}>BIO_REPRODUCTION</h3>
             </div>
 
             <PropertyRow icon={Flower2} label="Inflorescence" value={data.flower} color="#00f2ff" />
             <PropertyRow icon={Apple} label="Fructification" value={data.fruit} color="#00f2ff" />
             <PropertyRow icon={CircleDot} label="Seed Details" value={data.seed} color="#a3e635" />
             <PropertyRow icon={Zap} label="Pollination" value={data.pollinationType} />
-            <PropertyRow icon={Wind} label="Aromatic Profile" value={data.fragrance} color="#00f2ff" />
+
         </div>
     );
 };
@@ -73,23 +73,13 @@ const BiologicalPanel = ({ data }) => {
 const BotanyTab = ({ data, t }) => {
     return (
         <div style={{ display: 'grid', gap: '25px', animation: 'fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1)' }}>
-            {/* Intelligent Description */}
-            <div style={{ position: 'relative', padding: '0 5px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-                    <div style={{ width: '24px', height: '1px', background: 'var(--accent-color)' }}></div>
-                    <Dna size={16} color="var(--accent-color)" />
-                    <span className="mono" style={{ fontSize: '0.75rem', letterSpacing: '2px', color: 'var(--accent-color)' }}>ANALYSIS_OVERVIEW</span>
+            <div className="glass-panel" style={{ padding: '30px', marginBottom: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                    <Dna size={24} color="var(--accent-color)" />
+                    <span className="mono" style={{ fontSize: '0.8rem', letterSpacing: '1px' }}>ANALYSIS_OVERVIEW</span>
                 </div>
-                <p style={{
-                    color: 'var(--text-secondary)',
-                    fontSize: '1.05rem',
-                    lineHeight: '1.7',
-                    margin: 0,
-                    maxWidth: '850px',
-                    fontWeight: 300,
-                    fontStyle: 'italic'
-                }}>
-                    "{renderValue(data.botanical_description, 'Structural scan in progress... decoding morphological signatures for precise identification.')}"
+                <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: '1.7', marginBottom: '40px' }}>
+                    {renderValue(data.botanical_description, 'Structural scan in progress... decoding morphological signatures for precise identification.')}
                 </p>
             </div>
 

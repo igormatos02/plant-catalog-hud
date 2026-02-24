@@ -38,7 +38,7 @@ export const searchPlants = async (query, language = import.meta.env.VITE_DEFAUL
     - "scientific_name" (complete scientific name)
     Only return the JSON array, no other text.`;
 
-    const modelsToTry = ["gemini-flash-latest", "gemini-2.0-flash", "gemini-pro-latest"];
+    const modelsToTry = ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-flash-latest"];
 
     for (const modelName of modelsToTry) {
         try {
@@ -72,7 +72,7 @@ export const getPlantDetails = async (scientificName, language = import.meta.env
     - genus: The taxonomical genus (e.g., Rosa).
     - family: The taxonomical family (e.g., Rosaceae).
     - species: The taxonomical species (e.g., Rosa canina).
-    - description: A concise description with the plant type, history, origin, and interesting facts (HUD style, technical but poetic in ${langName}).
+    - description: A concise description with the plant type, history, origin, native climate, and interesting facts (HUD style, technical but poetic in ${langName}).
     - varieties: List known sub-species common names for "${scientificName}" (in ${langName}).
     - metadata: An object containing:
         - humidity: technical value for humidity needs.
@@ -81,6 +81,7 @@ export const getPlantDetails = async (scientificName, language = import.meta.env
         - light: technical value for light exposure.
         - toxicity: safety level or toxicity notes.
         - toxicity_level: Level (1-5 [1=non-toxic, 2=mildly toxic, 3=moderately toxic, 4=highly toxic, 5=lethal])
+        - size: technical value for maximum size (height/width) in metric units (in ${langName}).
         - type: type of plant and life cicle[anual, perene, bienal] (in ${langName}).
     - lifecycle: A JSON array of exactly 12 objects, one for each month (January to December). Each object must have:
         - month: The name of the month (in ${langName}).
@@ -92,7 +93,7 @@ export const getPlantDetails = async (scientificName, language = import.meta.env
         - is_sun_season: Boolean (true if this month is typically part of the sun/dry season).
     Only return the JSON object, no other text.`;
 
-    const modelsToTry = ["gemini-flash-latest", "gemini-2.0-flash", "gemini-pro-latest"];
+    const modelsToTry = ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-flash-latest"];
 
     for (const modelName of modelsToTry) {
         try {
@@ -122,16 +123,24 @@ export const getPlantTabDetails = async (scientificName, tabId, language = impor
     switch (tabId) {
 
         case 'botany':
-            tabPrompt = `Provide taxonomical and physical details for "${scientificName}". Return a JSON object with: "botanical_description" (a concise summary of botanical features), "foliage", "flower", "fruit", "seed","root", "stem","fragrance", "leaves","pollinationType","plantType","size" (max dimensions in meters, cm). All text in ${langName}.`;
+            tabPrompt = `Provide taxonomical and physical details for "${scientificName}". Return a JSON object with: "botanical_description" (a concise summary of botanical features), "foliage", "flower", "fruit", "seed","root", "stem","fragrance", "leaves","pollinationType","plantType". All text in ${langName}.`;
             break;
         case 'culinary':
-            tabPrompt = `Provide specific culinary applications for "${scientificName}" in ${langName}. Return a JSON object with field "culinary_use".`;
+            tabPrompt = `Provide specific culinary applications for "${scientificName}" in ${langName}. Return a JSON object with fields: "culinary_use" (general description), "culinary_leaves", "culinary_seeds", "culinary_fruits", "culinary_stem". If a part has no culinary use, return "NOT_APPLICABLE" for that field. For EACH part, also provide two booleans: "part_makes_tea" and "part_makes_oil". All text in ${langName}.`;
             break;
         case 'medical':
-            tabPrompt = `Provide therapeutic/medicinal benefits and essential oils info for "${scientificName}" in ${langName}. Return a JSON object with: "therapeutic_use" and "oils_and_florals".`;
+            tabPrompt = `Provide therapeutic/medicinal benefits, essential oils, and other subproducts for "${scientificName}" in ${langName}. Return a JSON object with: "therapeutic_use", "oils_and_florals", "tea" (medicinal tea), "perfume" (uses in perfumery), "soap" (uses in soaps/hygiene), "sachets" (uses in sachets/aromatics), and "other_subproducts". If a subproduct is not used, return "NOT_APPLICABLE". All text in ${langName}.`;
             break;
         case 'cultivation':
-            tabPrompt = `Provide cultivation protocols for "${scientificName}". Return a JSON object with: "cultivation" (summary), "pruning" (method/frequency), and "planting_season" (best months). All text in ${langName}.`;
+            tabPrompt = `Provide cultivation protocols for "${scientificName}" in ${langName}. Return a JSON object with: 
+            "cultivation" (general summary including origin and native climate), 
+            "soil" (how the soil should be mixed, organized and structured), 
+            "drainage" (drainage requirements and how to achieve them), 
+            "propagation" (how to make seedlings via cuttings and seeds), 
+            "symbiosis" (plants that live well together/companion planting), 
+            "protection" (needs for greenhouse in cold or shade in extreme sun), 
+            "pruning" (method, frequency and detailed instructions), 
+            "planting_season" (best months for planting). All text in ${langName}.`;
             break;
         default:
             return null;
@@ -139,7 +148,7 @@ export const getPlantTabDetails = async (scientificName, tabId, language = impor
 
     const prompt = `Act as a botanical expert. ${tabPrompt} Only return the JSON object, no other text.`;
 
-    const modelsToTry = ["gemini-flash-latest", "gemini-2.0-flash"];
+    const modelsToTry = ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-flash-latest"];
 
     for (const modelName of modelsToTry) {
         try {

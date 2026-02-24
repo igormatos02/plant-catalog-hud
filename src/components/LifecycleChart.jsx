@@ -74,12 +74,30 @@ const LifecycleChart = ({ data }) => {
                         );
                     })}
 
-                    {/* Grid Lines */}
+                    {/* Horizontal Grid & Labels */}
                     {[0, 2, 4, 6, 8, 10].map(v => (
+                        <g key={v}>
+                            <line
+                                x1={padding} y1={getY(v)} x2={width - padding} y2={getY(v)}
+                                stroke="rgba(255,255,255,0.05)" strokeDasharray="2,2"
+                            />
+                            <text
+                                x={padding - 10} y={getY(v) + 3}
+                                textAnchor="end"
+                                className="mono"
+                                style={{ fontSize: '0.5rem', fill: 'var(--text-secondary)', opacity: 0.5 }}
+                            >
+                                {v}
+                            </text>
+                        </g>
+                    ))}
+
+                    {/* Vertical Grid */}
+                    {data.map((_, i) => (
                         <line
-                            key={v}
-                            x1={padding} y1={getY(v)} x2={width - padding} y2={getY(v)}
-                            stroke="rgba(255,255,255,0.05)" strokeDasharray="2,2"
+                            key={i}
+                            x1={getX(i)} y1={padding} x2={getX(i)} y2={height - padding}
+                            stroke="rgba(255,255,255,0.03)"
                         />
                     ))}
 
@@ -94,36 +112,60 @@ const LifecycleChart = ({ data }) => {
                             initial={{ pathLength: 0 }}
                             animate={{ pathLength: 1 }}
                             transition={{ duration: 1.5, ease: "easeInOut" }}
+                            style={{ pointerEvents: 'none' }}
                         />
                     ))}
 
-                    {/* Interactive Points & Month Labels */}
+                    {/* Hover Guide Line */}
+                    {hoveredIndex !== null && (
+                        <line
+                            x1={getX(hoveredIndex)} y1={padding}
+                            x2={getX(hoveredIndex)} y2={height - padding}
+                            stroke="var(--accent-color)" strokeWidth="1" strokeDasharray="4,4"
+                            style={{ pointerEvents: 'none' }}
+                        />
+                    )}
+
+                    {/* Interaction Layer */}
+                    <rect
+                        x={padding} y={padding}
+                        width={chartWidth} height={chartHeight}
+                        fill="transparent"
+                        onMouseMove={(e) => {
+                            const svg = e.currentTarget.ownerSVGElement;
+                            const pt = svg.createSVGPoint();
+                            pt.x = e.clientX;
+                            pt.y = e.clientY;
+                            const localPt = pt.matrixTransform(svg.getScreenCTM().inverse());
+
+                            // Find closest data point
+                            const xNormalized = (localPt.x - padding) / chartWidth;
+                            const idx = Math.round(xNormalized * (data.length - 1));
+                            if (idx >= 0 && idx < data.length) {
+                                setHoveredIndex(idx);
+                            }
+                        }}
+                        onMouseLeave={() => setHoveredIndex(null)}
+                        style={{ cursor: 'crosshair' }}
+                    />
+
+                    {/* Month Labels (Always visible, highlighted on hover) */}
                     {data.map((d, i) => (
-                        <g key={i} onMouseEnter={() => setHoveredIndex(i)} onMouseLeave={() => setHoveredIndex(null)}>
-                            <rect
-                                x={getX(i) - 10} y={padding}
-                                width={20} height={chartHeight}
-                                fill="transparent"
-                                style={{ cursor: 'pointer' }}
-                            />
-                            {hoveredIndex === i && (
-                                <line x1={getX(i)} y1={padding} x2={getX(i)} y2={height - padding} stroke="var(--accent-color)" strokeWidth="1" strokeDasharray="4,4" />
-                            )}
-                            {/* Month Label */}
-                            <text
-                                x={getX(i)}
-                                y={height - 10}
-                                textAnchor="middle"
-                                className="mono"
-                                style={{
-                                    fontSize: '0.45rem',
-                                    fill: hoveredIndex === i ? 'var(--accent-color)' : 'var(--text-secondary)',
-                                    transition: 'fill 0.3s ease'
-                                }}
-                            >
-                                {d.month.substring(0, 3).toUpperCase()}
-                            </text>
-                        </g>
+                        <text
+                            key={i}
+                            x={getX(i)}
+                            y={height - 10}
+                            textAnchor="middle"
+                            className="mono"
+                            style={{
+                                fontSize: '0.45rem',
+                                fill: hoveredIndex === i ? 'var(--accent-color)' : 'var(--text-secondary)',
+                                transition: 'fill 0.3s ease',
+                                pointerEvents: 'none'
+                            }}
+                        >
+                            {d.month.substring(0, 3).toUpperCase()}
+                        </text>
                     ))}
                 </svg>
 
@@ -131,21 +173,22 @@ const LifecycleChart = ({ data }) => {
                 <AnimatePresence>
                     {hoveredIndex !== null && (
                         <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 10 }}
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
                             style={{
                                 position: 'absolute',
                                 left: hoveredIndex > 6 ? 'auto' : `${getX(hoveredIndex) + 20}px`,
                                 right: hoveredIndex > 6 ? `${width - getX(hoveredIndex) + 20}px` : 'auto',
-                                top: '20px',
+                                top: '10px',
                                 background: 'rgba(5, 12, 16, 0.95)',
                                 border: '1px solid var(--accent-color)',
                                 padding: '12px',
                                 zIndex: 100,
                                 backdropFilter: 'blur(10px)',
-                                minWidth: '150px',
-                                boxShadow: '0 0 20px rgba(0, 242, 255, 0.2)'
+                                minWidth: '160px',
+                                boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 242, 255, 0.1)',
+                                pointerEvents: 'none'
                             }}
                         >
                             <div className="mono" style={{ color: 'var(--accent-color)', fontSize: '0.8rem', marginBottom: '8px', borderBottom: '1px solid rgba(0, 242, 255, 0.2)', paddingBottom: '4px' }}>
