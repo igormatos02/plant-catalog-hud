@@ -11,7 +11,8 @@ const Topbar = ({ language, setLanguage }) => {
         { code: 'pt', label: 'PT' },
         { code: 'fi', label: 'FI' },
         { code: 'de', label: 'DE' },
-        { code: 'uk', label: 'UK' }
+        { code: 'uk', label: 'UK' },
+        { code: 'my', label: 'MY' }
     ];
 
     return (

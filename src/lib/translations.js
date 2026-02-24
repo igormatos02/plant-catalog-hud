@@ -193,5 +193,44 @@ export const translations = {
             pruning: "ОБРІЗКА",
             plantingSeason: "СЕЗОН ПОСАДКИ"
         }
+    },
+    my: {
+        catalog: "ကက်တလောက်",
+        about: "ကျွန်ုပ်တို့အကြောင်း",
+        lang: "ဘာသာစကား:",
+        status: "အခြေအနေ:",
+        optimal: "အကောင်းဆုံး",
+        archiveSearch: "မှတ်တမ်းရှာဖွေမှု",
+        accessingDatabase: "ကမ္ဘာလုံးဆိုင်ရာ ရုက္ခဗေဒဒေတာဘေ့စ်ကို ဝင်ရောက်ကြည့်ရှုနေသည်...",
+        placeholder: "နမူနာအမည် သို့မဟုတ် လက္ခဏာကို ရိုက်ထည့်ပါ...",
+        backToSearch: "ရှာဖွေမှုသို့ ပြန်သွားရန်",
+        initiatingDiscovery: "ကမ္ဘာလုံးဆိုင်ရာ မှတ်တမ်းရှာဖွေမှုကို စတင်နေသည်...",
+        aiProcessing: "အင်ဂျင်: ရုက္ခဗေဒဆိုင်ရာမေးမြန်းမှုကို လုပ်ဆောင်နေသည်",
+        decryptingSpecimen: "အာရုံကြောချိတ်ဆက်မှု ထူထောင်ပြီးပါပြီ- နမူနာဒေတာကို ပြန်ဆိုနေသည်...",
+        tabs: {
+            geral: "အထွေထွေ",
+            class: "အမျိုးအစား",
+            order: "မျိုးစဉ်",
+            family: "မျိုးရင်း",
+            genus: "မျိုးစု",
+            species: "မျိုးစိတ်",
+            variedades: "မျိုးကွဲများ",
+            knownVarieties: "သိရှိထားသော နမူနာမျိုးကွဲများ",
+            description: "ဖော်ပြချက်",
+            caracteristicas: "ရုက္ခဗေဒဆိုင်ရာ လက္ခဏာများ",
+            culinaria: "ချက်ပြုတ်မှုဆိုင်ရာ",
+            terapeutico: "ကုထုံး / ဆေးဘက်ဆိုင်ရာ",
+            cultivo: "စိုက်ပျိုးမှု"
+        },
+        metrics: {
+            tempRange: "အပူချိန် အပိုင်းအခြား",
+            hydration: "ရေဓာတ်",
+            luxExposure: "အလင်းထိတွေ့မှု",
+            bioToxicity: "ဇီဝအဆိပ်အတောက်",
+            toxicityLevel: "အဆိပ်အတောက်အဆင့်",
+            specimenSize: "နမူနာအရွယ်အစား",
+            pruning: "ကိုင်းဖြတ်ခြင်း",
+            plantingSeason: "စိုက်ပျိုးရာသီ"
+        }
     }
 };
