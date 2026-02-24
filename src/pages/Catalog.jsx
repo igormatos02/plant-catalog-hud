@@ -43,9 +43,14 @@ const Catalog = ({ language }) => {
                     scientific_name: scientificName,
                     class: geminiDetails.class,
                     family: geminiDetails.family,
+                    species: geminiDetails.species,
+                    order: geminiDetails.order,
+                    genus: geminiDetails.genus,
                     description: geminiDetails.description,
                     picture_url: null, // Image will be generated in Phase 2
-                    metadata: geminiDetails.metadata
+                    metadata: geminiDetails.metadata,
+                    varieties: geminiDetails.varieties,
+                    gbifId: geminiDetails.metadata.gbifId
                 };
 
                 setSelectedPlant(basePlant);
@@ -56,15 +61,15 @@ const Catalog = ({ language }) => {
                 try {
                     // 1. Align with PlantNet to get GBIF ID and validated scientific name
                     const alignment = await alignSpecies(scientificName);
-
+                    const firstVariety = geminiDetails.varieties?.[0];
                     if (alignment && alignment.gbifId) {
                         // 2. Fetch real specimen imagery from GBIF
-                        const realImageUrl = await fetchSpecimenImage(alignment.gbifId);
+                        const realImageUrl = await fetchSpecimenImage(alignment.gbifId, firstVariety);
                         if (realImageUrl) {
                             setSelectedPlant(prev => prev ? {
                                 ...prev,
-                                picture_url: realImageUrl,
-                                scientific_name: alignment.scientificName
+                                picture_url: realImageUrl
+
                             } : null);
                         } else {
                             // Fallback to LoremFlickr if no GBIF image found

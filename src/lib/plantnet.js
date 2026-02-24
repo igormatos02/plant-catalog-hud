@@ -52,18 +52,22 @@ export const alignSpecies = async (scientificName) => {
  * @param {string} gbifId - The GBIF ID for the species.
  * @returns {Promise<string|null>} - A URL for a real specimen photo.
  */
-export const fetchSpecimenImage = async (gbifId) => {
+export const fetchSpecimenImage = async (gbifId, variety) => {
     if (!gbifId) return null;
+
+    console.log(variety);
+
 
     try {
         // We use GBIF's occurrence search to find high-quality media associated with this taxon
-        const url = `https://api.gbif.org/v1/occurrence/search?taxonKey=${gbifId}&mediaType=StillImage&limit=1`;
+        const url = `https://api.gbif.org/v1/occurrence/search?taxonKey=${gbifId}&mediaType=StillImage&limit=15`;
         const response = await fetch(url);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
         const data = await response.json();
+
         if (data.results && data.results.length > 0) {
-            const firstResult = data.results[0];
+            const firstResult = data.results[10];
             if (firstResult.media && firstResult.media.length > 0) {
                 const imageUrl = firstResult.media[0].identifier;
                 console.log(`[GBIF] Specimen imagery resolved: ${imageUrl}`);

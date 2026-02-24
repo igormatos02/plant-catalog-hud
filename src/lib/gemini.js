@@ -28,7 +28,7 @@ export const searchPlants = async (query, language = 'en') => {
     IMPORTANT: Provide all text content in ${langName}.
     
     If ("${query}" is a full plant name or full scientific name) and (scientific_name === "${query}" or name === "${query}") Return a JSON array of up to 1 plant. 
-    Else return a JSON array of up to 10 plants. 
+    Else return a JSON array of up to 6 plants. 
     Each object must have:
     - "name" (common name in ${langName})
     - "popular_name" (popular name in ${langName})
@@ -61,26 +61,26 @@ export const getPlantDetails = async (scientificName, language = 'en') => {
     if (!API_KEY) return null;
 
     const langName = getLanguageName(language);
-    const prompt = `Act as a botanical expert. Provide detailed specifications for the plant "${scientificName}".
-    IMPORTANT: Provide all text (7 lines) content in ${langName}.
+    const prompt = `Act as a botanical expert. Provide core specifications for the plant "${scientificName}".
+    IMPORTANT: Provide all text content in ${langName}.
     
     Return a JSON object with the following fields (all text must be in ${langName}, except scientific_name):
     - name: The common name of the plant (in ${langName}).
     - class: The taxonomical class (e.g., Magnoliopsida).
+    - order: The taxonomical order (e.g., Rosales).
+    - genus: The taxonomical genus (e.g., Rosa).
     - family: The taxonomical family (e.g., Rosaceae).
-    - description: A description with the plant type, origin, interesting facts, description of the plant leaf, flower, fruit, stem, roots, and seeds (HUD style, technical but poetic in ${langName}).
+    - species: The taxonomical species (e.g., Rosa canina).
+    - description: A concise description with the plant type, history, origin, and interesting facts (HUD style, technical but poetic in ${langName}).
+    - varieties: List known sub-species common names for "${scientificName}" (in ${langName}).
     - metadata: An object containing:
         - humidity: technical value for humidity needs.
+        - gbifId: GBIF ID of the plant.
         - temperature: technical value for temperature range.
         - light: technical value for light exposure.
-        - toxicity: Level (1-5 [1=non-toxic, 2=mildly toxic, 3=moderately toxic, 4=highly toxic, 5=lethal]) and safety level or toxicity notes.
-        - culinary_use: specific culinary applications (if none, state "None observed").
-        - therapeutic_use: medicinal/therapeutic properties.
-        - oils_and_florals: information about essential oils or floral uses.
-        - cultivation: brief cultivation summary.
-        - size: expected dimensions/growth height.
-        - planting_season: ideal months or seasons for planting/harvesting.
-        - pruning: pruning technical frequency or method.
+        - toxicity: safety level or toxicity notes.
+        - toxicity_level: Level (1-5 [1=non-toxic, 2=mildly toxic, 3=moderately toxic, 4=highly toxic, 5=lethal])
+        - type: type of plant and life cicle[anual, perene, bienal] (in ${langName}).
     Only return the JSON object, no other text.`;
 
     const modelsToTry = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-pro"];
@@ -99,6 +99,50 @@ export const getPlantDetails = async (scientificName, language = 'en') => {
         } catch (error) {
             console.error(`[Gemini] Error with ${modelName}:`, error.message);
             if (modelName === modelsToTry[modelsToTry.length - 1]) throw error;
+        }
+    }
+    return null;
+};
+
+export const getPlantTabDetails = async (scientificName, tabId, language = 'en') => {
+    if (!API_KEY) return null;
+
+    const langName = getLanguageName(language);
+
+    let tabPrompt = "";
+    switch (tabId) {
+        case 'varieties':
+            tabPrompt = `List known specimen varieties for "${scientificName}" in ${langName}. Return a JSON object with a single string field "varieties".`;
+            break;
+        case 'botany':
+            tabPrompt = `Provide taxonomical and physical details for "${scientificName}". Return a JSON object with: "class", "family", "order", "genus", "foliage", "flower", "fruit", "seed","root", "stem","fragrance", "leaves","pollinationType","plantType","size" (max dimensions in meters, cm). All text in ${langName}.`;
+            break;
+        case 'culinary':
+            tabPrompt = `Provide specific culinary applications for "${scientificName}" in ${langName}. Return a JSON object with field "culinary_use".`;
+            break;
+        case 'medical':
+            tabPrompt = `Provide therapeutic/medicinal benefits and essential oils info for "${scientificName}" in ${langName}. Return a JSON object with: "therapeutic_use" and "oils_and_florals".`;
+            break;
+        case 'cultivation':
+            tabPrompt = `Provide cultivation protocols for "${scientificName}". Return a JSON object with: "cultivation" (summary), "pruning" (method/frequency), and "planting_season" (best months). All text in ${langName}.`;
+            break;
+        default:
+            return null;
+    }
+
+    const prompt = `Act as a botanical expert. ${tabPrompt} Only return the JSON object, no other text.`;
+
+    const modelsToTry = ["gemini-2.5-flash", "gemini-1.5-flash"];
+
+    for (const modelName of modelsToTry) {
+        try {
+            const model = getModel(modelName);
+            const result = await model.generateContent(prompt);
+            const text = result.response.text();
+            const cleanJson = text.replace(/```json|```/g, "").trim();
+            return JSON.parse(cleanJson);
+        } catch (error) {
+            console.error(`[Gemini] Tab ${tabId} error with ${modelName}:`, error.message);
         }
     }
     return null;
