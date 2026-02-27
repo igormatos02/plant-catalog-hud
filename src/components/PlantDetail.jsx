@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Loader2, Database } from 'lucide-react';
 import { translations } from '../lib/translations';
-import { getPlantTabDetails } from '../lib/gemini';
+import { getCompletePlantData } from '../lib/gemini';
 import { renderValue } from './PlantDetailUtils';
 
 // Import Tab Components
@@ -12,22 +12,43 @@ import MedicalTab from './tabs/MedicalTab';
 import CultivationTab from './tabs/CultivationTab';
 import SpecimenCarousel from './SpecimenCarousel';
 import LifecycleChart from './LifecycleChart';
+import ReportGenerator from './ReportGenerator';
 
 const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) => {
     const t = translations[language] || translations.en;
     const [imageLoaded, setImageLoaded] = useState(false);
     const [activeTab, setActiveTab] = useState('general');
-    const [loadedTabsData, setLoadedTabsData] = useState({});
-    const [tabLoadingStates, setTabLoadingStates] = useState({});
+    const [fullPlantData, setFullPlantData] = useState(null);
+    const [isDetailsLoading, setIsDetailsLoading] = useState(false);
 
-    // Reset and initialize with 'general' data when a new plant arrives
+    // Load ALL data at once when a plant is selected
     useEffect(() => {
+        const fetchAllDetails = async () => {
+            if (!plant?.scientific_name) return;
+
+            setFullPlantData(null);
+            setIsDetailsLoading(true);
+            try {
+                const data = await getCompletePlantData(plant.scientific_name, language);
+                if (data) {
+                    setFullPlantData(data);
+                } else {
+                    // Fallback to basic plant info if complete fetch fails
+                    setFullPlantData(plant);
+                }
+            } catch (err) {
+                console.error(`[PlantDetail] Failed to load comprehensive data:`, err);
+                setFullPlantData(plant);
+            } finally {
+                setIsDetailsLoading(false);
+            }
+        };
+
         if (plant) {
-            setLoadedTabsData({ general: plant });
-            setTabLoadingStates({});
             setActiveTab('general');
+            fetchAllDetails();
         }
-    }, [plant?.scientific_name]);
+    }, [plant?.scientific_name, language]);
 
     useEffect(() => {
         if (!isGeneratingImage && (plant?.picture_url || plant?.picture_urls)) {
@@ -37,23 +58,8 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
         }
     }, [isGeneratingImage, plant?.picture_url, plant?.picture_urls]);
 
-    const handleTabChange = async (tabId) => {
+    const handleTabChange = (tabId) => {
         setActiveTab(tabId);
-
-        // Don't reload if already loading or already have data
-        if (tabId === 'general' || loadedTabsData[tabId] || tabLoadingStates[tabId]) return;
-
-        setTabLoadingStates(prev => ({ ...prev, [tabId]: true }));
-        try {
-            const data = await getPlantTabDetails(plant.scientific_name, tabId, language);
-            if (data) {
-                setLoadedTabsData(prev => ({ ...prev, [tabId]: data }));
-            }
-        } catch (err) {
-            console.error(`[PlantDetail] Failed to load tab ${tabId}:`, err);
-        } finally {
-            setTabLoadingStates(prev => ({ ...prev, [tabId]: false }));
-        }
     };
 
     if (isLoading) {
@@ -74,18 +80,9 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
 
     const showImageLoading = isGeneratingImage || !imageLoaded || !plant.picture_url;
 
-    // Defensive merge
-    const activeTabData = loadedTabsData[activeTab] || {};
-    const currentData = {
-        ...plant,
-        ...activeTabData,
-        metadata: {
-            ...(plant.metadata || {}),
-            ...(activeTabData.metadata || {})
-        }
-    };
-
-    const isTabLoading = tabLoadingStates[activeTab];
+    // Use fullPlantData if available, otherwise fallback to the skeleton plant
+    const currentData = fullPlantData || plant;
+    const isTabLoading = isDetailsLoading;
 
     const tabs = [
         { id: 'general', label: t.tabs.geral },
@@ -100,13 +97,13 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
             case 'general':
                 return <GeneralTab data={currentData} t={t} />;
             case 'botany':
-                return <BotanyTab data={currentData} t={t} />;
+                return <BotanyTab data={currentData.botany || currentData} t={t} />;
             case 'culinary':
-                return <CulinaryTab data={currentData} t={t} />;
+                return <CulinaryTab data={currentData.culinary || currentData} t={t} />;
             case 'medical':
-                return <MedicalTab data={currentData} t={t} />;
+                return <MedicalTab data={currentData.medical || currentData} t={t} />;
             case 'cultivation':
-                return <CultivationTab data={currentData} t={t} />;
+                return <CultivationTab data={currentData.cultivation || currentData} t={t} />;
             default:
                 return null;
         }
@@ -159,8 +156,8 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
                     )}
 
                     {/* Chart below image */}
-                    {!isLoading && plant.lifecycle && (
-                        <LifecycleChart data={plant.lifecycle} />
+                    {!isLoading && currentData.lifecycle && (
+                        <LifecycleChart data={currentData.lifecycle} />
                     )}
                 </div>
 
@@ -172,9 +169,16 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
                             <span className="mono" style={{ color: 'var(--text-secondary)', fontSize: '0.7rem', fontStyle: 'italic' }}> {plant.popular_name || ''}</span>
                         </div>
 
-                        <h1 style={{ fontSize: '3.5rem', fontWeight: 800, margin: '10px 0', letterSpacing: '-1px' }}>
-                            {plant.scientific_name?.toUpperCase() || 'UNKNOWN_SPECIMEN'}
-                        </h1>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
+                            <h1 style={{ fontSize: '3.5rem', fontWeight: 800, margin: '10px 0', letterSpacing: '-1px' }}>
+                                {plant.scientific_name?.toUpperCase() || 'UNKNOWN_SPECIMEN'}
+                            </h1>
+                            <ReportGenerator
+                                plant={currentData}
+                                currentLanguage={language}
+                                t={t}
+                            />
+                        </div>
                         <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap', marginBottom: '20px' }}>
                             <div className="mono" style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--text-secondary)', padding: '10px 10px', fontSize: '0.8rem', border: '1px solid rgba(255,255,255,0.1)' }}>
                                 {t.tabs.class}: {currentData.class?.toUpperCase() || 'UNKNOWN'}

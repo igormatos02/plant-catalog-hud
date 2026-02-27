@@ -1,5 +1,5 @@
 import React from 'react';
-import { Thermometer, Droplets, Sun, Zap, Database, Maximize } from 'lucide-react';
+import { Thermometer, Droplets, Sun, Zap, Database, Maximize, Clock, Activity } from 'lucide-react';
 import { renderValue, MetricBox, getToxicityColor } from '../PlantDetailUtils';
 
 const GeneralTab = ({ data, t }) => {
@@ -20,6 +20,9 @@ const GeneralTab = ({ data, t }) => {
                 <MetricBox icon={Thermometer} label={t.metrics.tempRange} value={data.metadata?.temperature} />
                 <MetricBox icon={Droplets} label={t.metrics.hydration} value={data.metadata?.humidity} />
                 <MetricBox icon={Maximize} label={t.metrics.specimenSize} value={data.metadata?.size} />
+                <MetricBox icon={Clock} label={t.metrics.timeToAdult} value={data.metadata?.time_to_adult} />
+                <MetricBox icon={Activity} label={t.metrics.lifespan} value={data.metadata?.lifespan} />
+
                 <div className="glass-panel" style={{ padding: '15px', borderLeft: '2px solid #ffb700', height: '100%' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                         <Sun size={14} color="#ffb700" />
