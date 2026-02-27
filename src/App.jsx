@@ -15,7 +15,7 @@ function App() {
       setLanguage={setLanguage}
     >
       {activePage === 'catalog' && <Catalog language={language} />}
-      {activePage === 'about' && <About />}
+      {activePage === 'about' && <About language={language} />}
     </Layout>
   );
 }

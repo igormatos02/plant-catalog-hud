@@ -25,10 +25,10 @@ const CultivationTab = ({ data, t }) => {
             <div className="glass-panel" style={{ padding: '30px', marginBottom: '10px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
                     <Sprout size={24} color="var(--accent-color)" />
-                    <h3 className="mono" style={{ margin: 0, fontSize: '0.8rem', letterSpacing: '2px' }}>CULTIVATION_PROTOCOL</h3>
+                    <h3 className="mono" style={{ margin: 0, fontSize: '0.8rem', letterSpacing: '2px' }}>{t.cultivationLabels?.protocol || 'CULTIVATION_PROTOCOL'}</h3>
                 </div>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: '1.8' }}>
-                    {renderValue(data.cultivation, 'NO DATA AVAILABLE FOR CULTIVATION PROTOCOLS.')}
+                    {renderValue(data.cultivation, t.cultivationLabels?.noData || 'NO DATA AVAILABLE FOR CULTIVATION PROTOCOLS.')}
                 </p>
             </div>
 

@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CloudRain, Sun, Activity, Scissors, Leaf, Apple, Flower } from 'lucide-react';
 
-const LifecycleChart = ({ data }) => {
+const LifecycleChart = ({ data, t }) => {
     const [hoveredIndex, setHoveredIndex] = useState(null);
 
     if (!data || !Array.isArray(data) || data.length === 0) {
         return (
             <div className="glass-panel" style={{ padding: '20px', textAlign: 'center', opacity: 0.5 }}>
                 <Activity size={24} style={{ marginBottom: '10px' }} />
-                <div className="mono" style={{ fontSize: '0.7rem' }}>LIFECYCLE_DATA_UNAVAILABLE</div>
+                <div className="mono" style={{ fontSize: '0.7rem' }}>{t.lifecycle?.unavailable || 'LIFECYCLE_DATA_UNAVAILABLE'}</div>
             </div>
         );
     }
@@ -28,10 +28,10 @@ const LifecycleChart = ({ data }) => {
     };
 
     const series = [
-        { key: 'flowering', color: '#d946ef', label: 'FLOWERING_PHASE', icon: Flower },
-        { key: 'fructification', color: '#fa4e67', label: 'FRUCTIFICATION', icon: Apple },
-        { key: 'foliage', color: '#00ff9d', label: 'LEAVES_INDEX', icon: Leaf },
-        { key: 'pruning', color: '#ffb700', label: 'PRUNING_PHASE', icon: Scissors }
+        { key: 'flowering', color: '#d946ef', label: t.lifecycle?.flowering || 'FLOWERING_PHASE', icon: Flower },
+        { key: 'fructification', color: '#fa4e67', label: t.lifecycle?.fructification || 'FRUCTIFICATION', icon: Apple },
+        { key: 'foliage', color: '#00ff9d', label: t.lifecycle?.foliage || 'LEAVES_INDEX', icon: Leaf },
+        { key: 'pruning', color: '#ffb700', label: t.lifecycle?.pruning || 'PRUNING_PHASE', icon: Scissors }
     ];
 
     return (
@@ -44,7 +44,7 @@ const LifecycleChart = ({ data }) => {
         }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
                 <Activity size={16} color="var(--accent-color)" />
-                <span className="mono" style={{ fontSize: '0.75rem', letterSpacing: '2px', color: 'var(--accent-color)' }}>SPECIMEN_LIFECYCLE_ANALYSIS</span>
+                <span className="mono" style={{ fontSize: '0.75rem', letterSpacing: '2px', color: 'var(--accent-color)' }}>{t.lifecycle?.title || 'SPECIMEN_LIFECYCLE_ANALYSIS'}</span>
             </div>
 
             <div style={{ position: 'relative', width: '100%', height: `${height}px` }}>
@@ -223,11 +223,11 @@ const LifecycleChart = ({ data }) => {
                 <div style={{ marginLeft: 'auto', display: 'flex', gap: '15px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                         <div style={{ width: '10px', height: '10px', background: 'rgba(0, 242, 255, 0.2)' }}></div>
-                        <span className="mono" style={{ fontSize: '0.6rem', color: 'var(--text-secondary)' }}>RAIN_SEASON</span>
+                        <span className="mono" style={{ fontSize: '0.6rem', color: 'var(--text-secondary)' }}>{t.lifecycle?.rainSeason || 'RAIN_SEASON'}</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                         <div style={{ width: '10px', height: '10px', background: 'rgba(255, 183, 0, 0.2)' }}></div>
-                        <span className="mono" style={{ fontSize: '0.6rem', color: 'var(--text-secondary)' }}>SUN_SEASON</span>
+                        <span className="mono" style={{ fontSize: '0.6rem', color: 'var(--text-secondary)' }}>{t.lifecycle?.sunSeason || 'SUN_SEASON'}</span>
                     </div>
                 </div>
             </div>

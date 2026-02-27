@@ -72,6 +72,7 @@ export const getCompletePlantData = async (scientificName, language = import.met
     - culinary: { culinary_use, culinary_leaves, culinary_seeds, culinary_fruits, culinary_stem, part_makes_tea, part_makes_oil }
     - medical: { therapeutic_use, oils_and_florals, tea, perfume, soap, sachets, other_subproducts }
     - cultivation: { cultivation, soil, drainage, propagation, symbiosis, protection, pruning, planting_season }
+    - health: { overwater, underwater, oversun, undersun, nutrients, fungi, pests, treatments, care }
     
     IMPORTANT: Provide all text content in ${langName}. Use "NOT_APPLICABLE" if information is unknown.
     Output MUST be a valid JSON object only. No preamble or markdown code blocks.`;

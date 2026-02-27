@@ -10,6 +10,7 @@ import BotanyTab from './tabs/BotanyTab';
 import CulinaryTab from './tabs/CulinaryTab';
 import MedicalTab from './tabs/MedicalTab';
 import CultivationTab from './tabs/CultivationTab';
+import HealthTab from './tabs/HealthTab';
 import SpecimenCarousel from './SpecimenCarousel';
 import LifecycleChart from './LifecycleChart';
 import ReportGenerator from './ReportGenerator';
@@ -89,7 +90,8 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
         { id: 'botany', label: t.tabs.caracteristicas },
         { id: 'culinary', label: t.tabs.culinaria },
         { id: 'medical', label: t.tabs.terapeutico },
-        { id: 'cultivation', label: t.tabs.cultivo }
+        { id: 'cultivation', label: t.tabs.cultivo },
+        { id: 'health', label: t.tabs.saude }
     ];
 
     const renderTabContent = () => {
@@ -104,6 +106,8 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
                 return <MedicalTab data={currentData.medical || currentData} t={t} />;
             case 'cultivation':
                 return <CultivationTab data={currentData.cultivation || currentData} t={t} />;
+            case 'health':
+                return <HealthTab data={currentData.health || currentData} t={t} />;
             default:
                 return null;
         }
@@ -148,7 +152,7 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
                         }}>
                             <Loader2 className="animate-spin" size={32} color="var(--accent-color)" />
                             <p className="mono" style={{ marginTop: '15px', fontSize: '0.7rem', color: 'var(--accent-color)', letterSpacing: '2px', textAlign: 'center', padding: '0 20px' }}>
-                                {isGeneratingImage ? "SYNCHRONIZING WITH PLANTNET ARCHIVE..." : "RETRIEVING SPECIMEN IMAGERY..."}
+                                {isGeneratingImage ? (t.statusMessages?.syncing || "SYNCHRONIZING WITH PLANTNET ARCHIVE...") : (t.statusMessages?.retrieving || "RETRIEVING SPECIMEN IMAGERY...")}
                             </p>
                         </div>
                     ) : (
@@ -157,7 +161,7 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
 
                     {/* Chart below image */}
                     {!isLoading && currentData.lifecycle && (
-                        <LifecycleChart data={currentData.lifecycle} />
+                        <LifecycleChart data={currentData.lifecycle} t={t} />
                     )}
                 </div>
 
@@ -202,7 +206,7 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
                                 <span className="mono" style={{ fontSize: '0.8rem', letterSpacing: '1px' }}>  {t.tabs.knownVarieties.toUpperCase()}</span>
                             </div>
                             <p className="mono" style={{ fontSize: '0.8rem', color: 'var(--text-primary)' }}>
-                                {renderValue(currentData.varieties, 'NO ADDITIONAL VARIETIES DOCUMENTED IN ARCHIVE.')}
+                                {renderValue(currentData.varieties, t.statusMessages?.noVarieties || 'NO ADDITIONAL VARIETIES DOCUMENTED IN ARCHIVE.')}
                             </p>
                         </div>
 
@@ -249,7 +253,7 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
                             }}>
                                 <Loader2 className="animate-spin" size={32} color="var(--accent-color)" />
                                 <div className="mono" style={{ marginTop: '15px', fontSize: '0.6rem', color: 'var(--accent-color)', letterSpacing: '2px' }}>
-                                    DECRYPTING_TAB_DATA...
+                                    {(t.statusMessages?.decrypting || 'DECRYPTING_TAB_DATA...').toUpperCase()}
                                 </div>
                             </div>
                         ) : (

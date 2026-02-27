@@ -52,10 +52,10 @@ const CulinaryTab = ({ data, t }) => {
             <div className="glass-panel" style={{ padding: '30px', marginBottom: '10px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
                     <Utensils size={24} color="var(--accent-color)" />
-                    <h3 className="mono" style={{ margin: 0, fontSize: '0.8rem', letterSpacing: '2px' }}>CULINARY USE ARCHIVE</h3>
+                    <h3 className="mono" style={{ margin: 0, fontSize: '0.8rem', letterSpacing: '2px' }}>{t.culinaryLabels?.archive || 'CULINARY USE ARCHIVE'}</h3>
                 </div>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: '1.8' }}>
-                    {renderValue(data.culinary_use, 'NO DATA AVAILABLE FOR CULINARY APPLICATIONS.')}
+                    {renderValue(data.culinary_use, t.culinaryLabels?.noData || 'NO DATA AVAILABLE FOR CULINARY APPLICATIONS.')}
                 </p>
             </div>
 

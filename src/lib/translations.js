@@ -26,7 +26,8 @@ export const translations = {
             caracteristicas: "Botanical Traits",
             culinaria: "Culinary",
             terapeutico: "Therapeutic / Medicinal",
-            cultivo: "Cultivation"
+            cultivo: "Cultivation",
+            saude: "Plant Health"
         },
         metrics: {
             tempRange: "TEMP_RANGE",
@@ -40,11 +41,41 @@ export const translations = {
             pruning: "PRUNING",
             plantingSeason: "PLANTING SEASON",
             caution: "CAUTION",
-            danger: "DANGER"
+            danger: "DANGER",
+            health: {
+                overwater: "Overwatering Symptoms",
+                underwater: "Underwatering Symptoms",
+                oversun: "Excessive Sun",
+                undersun: "Insufficient Light",
+                nutrients: "Nutrient Deficiency",
+                fungi: "Common Fungi",
+                pests: "Common Pests",
+                treatments: "Healing Treatments",
+                care: "Maintenance Plan"
+            }
         },
         warnings: {
             culinary: "INGESTION_HAZARD: NOT SUITABLE FOR HUMAN CONSUMPTION.",
             medical: "PHARMACOLOGICAL_HAZARD: EXTREME CAUTION. POTENTIAL TOXICITY."
+        },
+        statusMessages: {
+            syncing: "SYNCHRONIZING WITH PLANTNET ARCHIVE...",
+            retrieving: "RETRIEVING SPECIMEN IMAGERY...",
+            decrypting: "DECRYPTING_TAB_DATA...",
+            noVarieties: "NO ADDITIONAL VARIETIES DOCUMENTED IN ARCHIVE."
+        },
+        aboutPage: {
+            title: "ABOUT US",
+            welcome: "Welcome to A.G. BOTANICS, where cutting-edge technology meets the timeless beauty of the natural world.",
+            mission: "Our mission is to archive and analyze every plant species on the planet using advanced neural networks and deep-learning algorithms. By combining botanical science with high-fidelity digital visualization, we provide an unparalleled biological reference system.",
+            precision: "PRECISION",
+            precisionText: "Atomic-level scanning of botanical structures.",
+            intelligence: "INTELLIGENCE",
+            intelligenceText: "AI-driven taxonomic classification and analysis."
+        },
+        errors: {
+            discovery: "Discovery sequence failure.",
+            description: "Critical error in botanical data stream."
         },
         culinaryParts: {
             leaves: "Leaves",
@@ -67,7 +98,47 @@ export const translations = {
             propagation: "Propagation (Cuttings/Seeds)",
             symbiosis: "Companion Plants",
             protection: "Environmental Protection",
-            pruning: "Pruning Method"
+            pruning: "Pruning Method",
+            protocol: "CULTIVATION_PROTOCOL",
+            noData: "NO DATA AVAILABLE FOR CULTIVATION PROTOCOLS."
+        },
+        lifecycle: {
+            title: "SPECIMEN_LIFECYCLE_ANALYSIS",
+            flowering: "FLOWERING_PHASE",
+            fructification: "FRUCTIFICATION",
+            foliage: "LEAVES_INDEX",
+            pruning: "PRUNING_PHASE",
+            rainSeason: "RAIN_SEASON",
+            sunSeason: "SUN_SEASON",
+            unavailable: "LIFECYCLE_DATA_UNAVAILABLE"
+        },
+        botanyLabels: {
+            architecture: "SPECIMEN_ARCHITECTURE",
+            reproduction: "BIO_REPRODUCTION",
+            analysis: "ANALYSIS_OVERVIEW",
+            growthForm: "Growth Form",
+            aromatic: "Aromatic Profile",
+            foliage: "Foliage Type",
+            stem: "Stem System",
+            root: "Root Network",
+            flower: "Inflorescence",
+            fruit: "Fructification",
+            seed: "Seed Details",
+            pollination: "Pollination",
+            scanInProgress: "Structural scan in progress... decoding morphological signatures."
+        },
+        culinaryLabels: {
+            archive: "CULINARY USE ARCHIVE",
+            noData: "NO DATA AVAILABLE FOR CULINARY APPLICATIONS."
+        },
+        medicalLabels: {
+            benefits: "MEDICAL_BENEFITS",
+            noData: "NO DATA AVAILABLE FOR MEDICINAL APPLICATIONS.",
+            essences: "ESSENCES & OILS"
+        },
+        healthLabels: {
+            diagnosis: "VITALITY_DIAGNOSIS",
+            monitoring: "Monitoring specimen health status... Analyze visual cues."
         }
     },
     pt: {
@@ -97,7 +168,8 @@ export const translations = {
             caracteristicas: "Características Botânicas",
             culinaria: "Culinária",
             terapeutico: "Terapêutico / Medicinal",
-            cultivo: "Cultivo"
+            cultivo: "Cultivo",
+            saude: "Saúde da Planta"
         },
         metrics: {
             tempRange: "FAIXA_TEMP",
@@ -111,11 +183,41 @@ export const translations = {
             pruning: "PODA",
             plantingSeason: "ESTAÇÃO DE PLANTIO",
             caution: "CUIDADO",
-            danger: "PERIGO"
+            danger: "PERIGO",
+            health: {
+                overwater: "Sintomas de Excesso de Água",
+                underwater: "Sintomas de Falta de Água",
+                oversun: "Excesso de Sol",
+                undersun: "Falta de Sol",
+                nutrients: "Falta de Nutrientes",
+                fungi: "Fungos Comuns",
+                pests: "Pragas Comuns",
+                treatments: "Tratamentos",
+                care: "Plano de Cuidados"
+            }
         },
         warnings: {
             culinary: "PERIGO DE INGESTÃO: NÃO ADEQUADA PARA CONSUMO HUMANO.",
             medical: "RISCO FARMACOLÓGICO: CUIDADO EXTREMO. POTENCIAL TOXICIDADE."
+        },
+        statusMessages: {
+            syncing: "SINCRONIZANDO COM ARQUIVO PLANTNET...",
+            retrieving: "RECUPERANDO IMAGENS DO ESPÉCIME...",
+            decrypting: "DESCRIPTOGRAFANDO_DADOS_DA_ABA...",
+            noVarieties: "NENHUMA VARIEDADE ADICIONAL DOCUMENTADA NO ARQUIVO."
+        },
+        aboutPage: {
+            title: "SOBRE NÓS",
+            welcome: "Bem-vindo à A.G. BOTANICS, onde a tecnologia de ponta encontra a beleza atemporal do mundo natural.",
+            mission: "Nossa missão é arquivar e analisar cada espécie de planta no planeta usando redes neurais avançadas e algoritmos de deep-learning. Ao combinar ciência botânica com visualização digital de alta fidelidade, fornecemos um sistema de referência biológica sem precedentes.",
+            precision: "PRECISÃO",
+            precisionText: "Escaneamento de nível atômico de estruturas botânicas.",
+            intelligence: "INTELIGÊNCIA",
+            intelligenceText: "Classificação taxonômica e análise impulsionadas por IA."
+        },
+        errors: {
+            discovery: "Falha na sequência de descoberta.",
+            description: "Erro crítico no fluxo de dados botânicos."
         },
         culinaryParts: {
             leaves: "Folhas",
@@ -138,7 +240,47 @@ export const translations = {
             propagation: "Propagação (Estacas/Sementes)",
             symbiosis: "Plantas Companheiras",
             protection: "Proteção Ambiental",
-            pruning: "Método de Poda"
+            pruning: "Método de Poda",
+            protocol: "PROTOCOLO DE CULTIVO",
+            noData: "SEM DADOS DISPONÍVEIS PARA PROTOCOLOS DE CULTIVO."
+        },
+        lifecycle: {
+            title: "ANÁLISE DE CICLO DE VIDA DO ESPÉCIME",
+            flowering: "FASE DE FLORAÇÃO",
+            fructification: "FRUTIFICAÇÃO",
+            foliage: "ÍNDICE DE FOLHAGEM",
+            pruning: "FASE DE PODA",
+            rainSeason: "ESTAÇÃO CHUVOSA",
+            sunSeason: "ESTAÇÃO SECA/SOL",
+            unavailable: "DADOS DE CICLO DE VIDA INDISPONÍVEIS"
+        },
+        botanyLabels: {
+            architecture: "ARQUITETURA DO ESPÉCIME",
+            reproduction: "BIO_REPRODUÇÃO",
+            analysis: "VISÃO GERAL DO EXAME",
+            growthForm: "Forma de Crescimento",
+            aromatic: "Perfil Aromático",
+            foliage: "Tipo de Folhagem",
+            stem: "Sistema de Caule",
+            root: "Rede de Raízes",
+            flower: "Inflorescência",
+            fruit: "Frutificação",
+            seed: "Detalhes da Semente",
+            pollination: "Polinização",
+            scanInProgress: "Escaneamento estrutural em andamento... decodificando assinaturas morfológicas."
+        },
+        culinaryLabels: {
+            archive: "ARQUIVO DE USO CULINÁRIO",
+            noData: "SEM DADOS DISPONÍVEIS PARA APLICAÇÕES CULINÁRIAS."
+        },
+        medicalLabels: {
+            benefits: "BENEFÍCIOS MÉDICOS",
+            noData: "SEM DADOS DISPONÍVEIS PARA APLICAÇÕES MEDICINAIS.",
+            essences: "ESSÊNCIAS E ÓLEOS"
+        },
+        healthLabels: {
+            diagnosis: "DIAGNÓSTICO DE VITALIDADE",
+            monitoring: "Monitorando estado de saúde do espécime... Analise pistas visuais."
         }
     },
     fi: {
@@ -168,7 +310,8 @@ export const translations = {
             caracteristicas: "Kasvitieteelliset piirteet",
             culinaria: "Kulinaarinen",
             terapeutico: "Terapeuttinen / Lääkinnällinen",
-            cultivo: "Viljely"
+            cultivo: "Viljely",
+            saude: "Kasvien Terveys"
         },
         metrics: {
             tempRange: "LÄMPÖTILA_ALUE",
@@ -182,7 +325,18 @@ export const translations = {
             pruning: "LEIKKAUS",
             plantingSeason: "ISTUTUSKAUSI",
             caution: "VAROITUS",
-            danger: "VAARA"
+            danger: "VAARA",
+            health: {
+                overwater: "Liikakastelun Oireet",
+                underwater: "Vedenpuutteen Oireet",
+                oversun: "Liikaa Aurinkoa",
+                undersun: "Valon Puute",
+                nutrients: "Ravinteiden Puute",
+                fungi: "Yleiset Sienet",
+                pests: "Yleiset Tuhoeläimet",
+                treatments: "Hoidot",
+                care: "Hoitosuunnitelma"
+            }
         },
         warnings: {
             culinary: "NIELEMISVAARA: EI SOVELLU IHMIS RAVINNOKSI.",
@@ -239,7 +393,8 @@ export const translations = {
             caracteristicas: "Botanische Merkmale",
             culinaria: "Kulinarisch",
             terapeutico: "Therapeutisch / Medizinisch",
-            cultivo: "Anbau"
+            cultivo: "Anbau",
+            saude: "Pflanzengesundheit"
         },
         metrics: {
             tempRange: "TEMP_BEREICH",
@@ -253,7 +408,18 @@ export const translations = {
             pruning: "BESCHNITT",
             plantingSeason: "PFLANZZEIT",
             caution: "VORSICHT",
-            danger: "GEFAHR"
+            danger: "GEFAHR",
+            health: {
+                overwater: "Überwässerungs-Symptome",
+                underwater: "Wassermangel-Symptome",
+                oversun: "Zu viel Sonne",
+                undersun: "Zu wenig Licht",
+                nutrients: "Nährstoffmangel",
+                fungi: "Häufige Pilze",
+                pests: "Häufige Schädlinge",
+                treatments: "Behandlungen",
+                care: "Pflegeplan"
+            }
         },
         warnings: {
             culinary: "VERSCHLUCKUNGSGEFAHR: NICHT FOR DEN MENSCHLICHEN VERZEHR GEEIGNET.",
@@ -310,7 +476,8 @@ export const translations = {
             caracteristicas: "Ботанічні характеристики",
             culinaria: "Кулінарія",
             terapeutico: "Терапевтичне / Медичне",
-            cultivo: "Вирощування"
+            cultivo: "Вирощування",
+            saude: "Здоров’я Рослини"
         },
         metrics: {
             tempRange: "ТЕМП_ДІАПАЗОН",
@@ -324,7 +491,18 @@ export const translations = {
             pruning: "ОБРІЗКА",
             plantingSeason: "СЕЗОН ПОСАДКИ",
             caution: "ОБЕРЕЖНО",
-            danger: "НЕБЕЗПЕКА"
+            danger: "НЕБЕЗПЕКА",
+            health: {
+                overwater: "Симптоми Надлишку Води",
+                underwater: "Симптоми Нестачі Води",
+                oversun: "Надлишок Сонця",
+                undersun: "Нестача Світла",
+                nutrients: "Дефіцит Поживних Речовин",
+                fungi: "Типові Грибки",
+                pests: "Типові Шкідники",
+                treatments: "Методи Лікування",
+                care: "План Коригування Догляду"
+            }
         },
         warnings: {
             culinary: "НЕБЕЗПЕКА КОВТАННЯ: НЕ ПРИДАТНО ДЛЯ СПОЖИВАННЯ ЛЮДИНОЮ.",
@@ -381,12 +559,13 @@ export const translations = {
             caracteristicas: "ရုက္ခဗေဒဆိုင်ရာ လက္ခဏာများ",
             culinaria: "ချက်ပြုတ်မှုဆိုင်ရာ",
             terapeutico: "ကုထုံး / ဆေးဘက်ဆိုင်ရာ",
-            cultivo: "စိုက်ပျိုးမှု"
+            cultivo: "စိုက်ပျိုးမှု",
+            saude: "အပင်ကျန်းမာရေး"
         },
         metrics: {
             tempRange: "အပူချိန် အပိုင်းအခြား",
             hydration: "ရေဓာတ်",
-            luxExposure: "အလင်းထိတွေ့မှု",
+            luxExposure: "အလင်းထိတော့မှု",
             bioToxicity: "ဇီဝအဆိပ်အတောက်",
             toxicityLevel: "အဆိပ်အတောက်အဆင့်",
             specimenSize: "နမူနာအရွယ်အစား",
@@ -395,7 +574,18 @@ export const translations = {
             pruning: "ကိုင်းဖြတ်ခြင်း",
             plantingSeason: "စိုက်ပျိုးရာသီ",
             caution: "သတိပြုရန်",
-            danger: "အန္တရာယ်ရှိသည်"
+            danger: "အန္တရာယ်ရှိသည်",
+            health: {
+                overwater: "ရေများလွန်းသည့် လက္ခဏာများ",
+                underwater: "ရေလိုအပ်သည့် လက္ခဏာများ",
+                oversun: "နေရောင်ခြည် များလွန်းခြင်း",
+                undersun: "အလင်းရောင် မလုံလောက်ခြင်း",
+                nutrients: "အာဟာရဓာတ် လိုအပ်ချက်",
+                fungi: "အဖြစ်များသော မှိုရောဂါများ",
+                pests: "အဖြစ်များသော ပိုးမွှားများ",
+                treatments: "ကုသနည်းများ",
+                care: "ပြုစုစောင့်ရှောက်မှု အစီအစဉ်"
+            }
         },
         warnings: {
             culinary: "မျိုချမိပါက အန္တရာယ်ရှိသည်- စားသုံးရန် မသင့်တော်ပါ။",

@@ -33,15 +33,15 @@ const MedicalTab = ({ data, t }) => {
             <div className="glass-panel" style={{ padding: '30px', marginBottom: '10px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
                     <Heart size={18} color="#ff3e3e" />
-                    <h3 className="mono" style={{ margin: 0, fontSize: '0.8rem', letterSpacing: '2px' }}>MEDICAL_BENEFITS</h3>
+                    <h3 className="mono" style={{ margin: 0, fontSize: '0.8rem', letterSpacing: '2px' }}>{t.medicalLabels?.benefits || 'MEDICAL_BENEFITS'}</h3>
                 </div>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: '1.8' }}>
-                    {renderValue(data.therapeutic_use, 'NO DATA AVAILABLE FOR MEDICINAL APPLICATIONS.')}
+                    {renderValue(data.therapeutic_use, t.medicalLabels?.noData || 'NO DATA AVAILABLE FOR MEDICINAL APPLICATIONS.')}
                 </p>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                <PartBox title="ESSENCES & OILS" content={data.oils_and_florals} color="#ffb700" icon={Pipette} />
+                <PartBox title={t.medicalLabels?.essences || "ESSENCES & OILS"} content={data.oils_and_florals} color="#ffb700" icon={Pipette} />
                 <PartBox title={t.subproducts.tea} content={data.tea} color="#4ade80" icon={Coffee} />
                 <PartBox title={t.subproducts.perfume} content={data.perfume} color="var(--accent-color)" icon={Pipette} />
                 <PartBox title={t.subproducts.soap} content={data.soap} color="#e2e8f0" icon={Pipette} />

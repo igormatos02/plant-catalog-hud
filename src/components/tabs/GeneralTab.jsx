@@ -11,7 +11,7 @@ const GeneralTab = ({ data, t }) => {
                     <span className="mono" style={{ fontSize: '0.8rem', letterSpacing: '1px' }}>{t.tabs.description.toUpperCase()}</span>
                 </div>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: '1.7', marginBottom: '40px' }}>
-                    {renderValue(data.description, 'NO DESCRIPTION AVAILABLE.')}
+                    {renderValue(data.description, t.tabs.unavailable || 'NO DESCRIPTION AVAILABLE.')}
                 </p>
             </div>
 

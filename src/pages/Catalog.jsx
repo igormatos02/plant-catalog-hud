@@ -36,25 +36,14 @@ const Catalog = ({ language }) => {
             // PHASE 1: Data Decryption (Text & Metadata)
             const geminiDetails = await getPlantDetails(scientificName, lang);
             if (geminiDetails) {
-                // Initialize plant with text data first
-                const basePlant = {
-                    name: geminiDetails.name,
-                    popular_name: geminiDetails.popular_name,
+                // Initialize plant with complete text data
+                const completePlant = {
+                    ...geminiDetails,
                     scientific_name: scientificName,
-                    class: geminiDetails.class,
-                    family: geminiDetails.family,
-                    species: geminiDetails.species,
-                    order: geminiDetails.order,
-                    genus: geminiDetails.genus,
-                    description: geminiDetails.description,
-                    picture_url: null, // Image will be generated in Phase 2
-                    metadata: geminiDetails.metadata,
-                    varieties: geminiDetails.varieties,
-                    gbifId: geminiDetails.metadata.gbifId,
-                    lifecycle: geminiDetails.lifecycle
+                    picture_url: null // Image will be generated in Phase 2
                 };
 
-                setSelectedPlant(basePlant);
+                setSelectedPlant(completePlant);
                 setIsLoadingDetail(false); // Text is visible
                 setIsGeneratingImage(true); // Signal Phase 2 start
 
@@ -103,7 +92,7 @@ const Catalog = ({ language }) => {
             console.error("Discovery sequence failure:", err);
             setSelectedPlant({
                 scientific_name: scientificName,
-                description: "Critical error in botanical data stream.",
+                description: t.errors.description || "Critical error in botanical data stream.",
                 metadata: { humidity: 'ERR', temperature: 'ERR', light: 'ERR', toxicity: 'ERR' }
             });
             setIsLoadingDetail(false);

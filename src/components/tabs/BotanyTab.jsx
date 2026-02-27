@@ -37,20 +37,20 @@ const ArchitecturePanel = ({ data, t }) => {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
                 <Target size={14} color="var(--accent-color)" />
-                <h3 className="mono" style={{ margin: 0, fontSize: '0.7rem', letterSpacing: '2px' }}>SPECIMEN_ARCHITECTURE</h3>
+                <h3 className="mono" style={{ margin: 0, fontSize: '0.7rem', letterSpacing: '2px' }}>{t.botanyLabels?.architecture || 'SPECIMEN_ARCHITECTURE'}</h3>
             </div>
 
 
-            <PropertyRow icon={Sprout} label="Growth Form" value={data.plantType} />
-            <PropertyRow icon={Wind} label="Aromatic Profile" value={data.fragrance} color="#00f2ff" />
-            <PropertyRow icon={Leaf} label="Foliage Type" value={data.foliage} />
-            <PropertyRow icon={AlignLeft} label="Stem System" value={data.stem} color="#94a3b8" />
-            <PropertyRow icon={ArrowDown} label="Root Network" value={data.root} color="#94a3b8" />
+            <PropertyRow icon={Sprout} label={t.botanyLabels?.growthForm || "Growth Form"} value={data.plantType} />
+            <PropertyRow icon={Wind} label={t.botanyLabels?.aromatic || "Aromatic Profile"} value={data.fragrance} color="#00f2ff" />
+            <PropertyRow icon={Leaf} label={t.botanyLabels?.foliage || "Foliage Type"} value={data.foliage} />
+            <PropertyRow icon={AlignLeft} label={t.botanyLabels?.stem || "Stem System"} value={data.stem} color="#94a3b8" />
+            <PropertyRow icon={ArrowDown} label={t.botanyLabels?.root || "Root Network"} value={data.root} color="#94a3b8" />
         </div>
     );
 };
 
-const BiologicalPanel = ({ data }) => {
+const BiologicalPanel = ({ data, t }) => {
     const hasData = data.flower || data.fruit || data.seed || data.pollinationType || data.fragrance;
     if (!hasData) return null;
 
@@ -58,13 +58,13 @@ const BiologicalPanel = ({ data }) => {
         <div className="glass-panel" style={{ padding: '25px', borderLeft: '3px solid #00f2ff22' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
                 <Binary size={18} color="#00f2ff" />
-                <h3 className="mono" style={{ margin: 0, fontSize: '0.7rem', letterSpacing: '2px', color: '#00f2ff' }}>BIO_REPRODUCTION</h3>
+                <h3 className="mono" style={{ margin: 0, fontSize: '0.7rem', letterSpacing: '2px', color: '#00f2ff' }}>{t.botanyLabels?.reproduction || 'BIO_REPRODUCTION'}</h3>
             </div>
 
-            <PropertyRow icon={Flower2} label="Inflorescence" value={data.flower} color="#00f2ff" />
-            <PropertyRow icon={Apple} label="Fructification" value={data.fruit} color="#00f2ff" />
-            <PropertyRow icon={CircleDot} label="Seed Details" value={data.seed} color="#a3e635" />
-            <PropertyRow icon={Zap} label="Pollination" value={data.pollinationType} />
+            <PropertyRow icon={Flower2} label={t.botanyLabels?.flower || "Inflorescence"} value={data.flower} color="#00f2ff" />
+            <PropertyRow icon={Apple} label={t.botanyLabels?.fruit || "Fructification"} value={data.fruit} color="#00f2ff" />
+            <PropertyRow icon={CircleDot} label={t.botanyLabels?.seed || "Seed Details"} value={data.seed} color="#a3e635" />
+            <PropertyRow icon={Zap} label={t.botanyLabels?.pollination || "Pollination"} value={data.pollinationType} />
 
         </div>
     );
@@ -76,10 +76,10 @@ const BotanyTab = ({ data, t }) => {
             <div className="glass-panel" style={{ padding: '30px', marginBottom: '10px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
                     <Dna size={24} color="var(--accent-color)" />
-                    <span className="mono" style={{ fontSize: '0.8rem', letterSpacing: '1px' }}>ANALYSIS_OVERVIEW</span>
+                    <span className="mono" style={{ fontSize: '0.8rem', letterSpacing: '1px' }}>{t.botanyLabels?.analysis || 'ANALYSIS_OVERVIEW'}</span>
                 </div>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: '1.7', marginBottom: '40px' }}>
-                    {renderValue(data.botanical_description, 'Structural scan in progress... decoding morphological signatures for precise identification.')}
+                    {renderValue(data.botanical_description, t.botanyLabels?.scanInProgress || 'Structural scan in progress... decoding morphological signatures for precise identification.')}
                 </p>
             </div>
 
@@ -91,7 +91,7 @@ const BotanyTab = ({ data, t }) => {
                 marginTop: '10px'
             }}>
                 <ArchitecturePanel data={data} t={t} />
-                <BiologicalPanel data={data} />
+                <BiologicalPanel data={data} t={t} />
             </div>
 
             <style dangerouslySetInnerHTML={{
