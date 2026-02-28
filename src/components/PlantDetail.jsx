@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Loader2, Database, RefreshCw, AlertTriangle, Skull } from 'lucide-react';
 import { translations } from '../lib/translations';
-import { getCompletePlantData } from '../lib/gemini';
+import { getCompletePlantData, fetchGoogleImages } from '../lib/gemini';
 import { renderValue, parseToxicity, getToxicityColor } from './PlantDetailUtils';
 
 // Import Tab Components
@@ -21,6 +21,10 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
     const [activeTab, setActiveTab] = useState('general');
     const [fullPlantData, setFullPlantData] = useState(null);
     const [isDetailsLoading, setIsDetailsLoading] = useState(false);
+
+    // Google Custom Image Search Override State
+    const [customImages, setCustomImages] = useState(null);
+    const [isSearchingImages, setIsSearchingImages] = useState(false);
 
     // Load ALL data at once when a plant is selected
     useEffect(() => {
@@ -47,6 +51,7 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
 
         if (plant) {
             setActiveTab('general');
+            setCustomImages(null);
             fetchAllDetails();
         }
     }, [plant?.scientific_name, language]);
@@ -63,6 +68,28 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
         setActiveTab(tabId);
     };
 
+    const handleImageSearch = async (query) => {
+        // Prevent click if we don't have the API keys configured
+        if (!import.meta.env.VITE_GOOGLE_API_KEY || !import.meta.env.VITE_GOOGLE_CX) {
+            alert("Google Custom Search API Key or CX is missing in `.env`.");
+            return;
+        }
+
+        setIsSearchingImages(true);
+        setCustomImages(null);
+        try {
+            const searchQuery = `${query} plant`;
+            const images = await fetchGoogleImages(searchQuery);
+            if (images && images.length > 0) {
+                setCustomImages(images);
+            }
+        } catch (error) {
+            console.error("Failed to fetch custom google images:", error);
+        } finally {
+            setIsSearchingImages(false);
+        }
+    };
+
     const handleRefreshData = async () => {
         if (!plant?.scientific_name) return;
 
@@ -71,6 +98,7 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
             const data = await getCompletePlantData(plant.scientific_name, language, true);
             if (data) {
                 setFullPlantData(data);
+                setCustomImages(null);
             }
         } catch (err) {
             console.error(`[PlantDetail] Failed to refresh data:`, err);
@@ -96,6 +124,7 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
     if (!plant) return null;
 
     const showImageLoading = isGeneratingImage || !imageLoaded || !plant.picture_url;
+    const isShowingCustomImages = !!customImages;
 
     // Use fullPlantData if available, otherwise fallback to the skeleton plant
     const currentData = fullPlantData || plant;
@@ -152,7 +181,7 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
             <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1fr) 1.5fr', gap: '40px' }}>
                 {/* Left Col: Image / Carousel */}
                 <div style={{ position: 'relative', height: 'fit-content' }}>
-                    {showImageLoading ? (
+                    {showImageLoading || isSearchingImages ? (
                         <div className="hud-border" style={{
                             padding: '4px',
                             background: 'var(--accent-color)',
@@ -167,11 +196,32 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
                         }}>
                             <Loader2 className="animate-spin" size={32} color="var(--accent-color)" />
                             <p className="mono" style={{ marginTop: '15px', fontSize: '0.7rem', color: 'var(--accent-color)', letterSpacing: '2px', textAlign: 'center', padding: '0 20px' }}>
-                                {isGeneratingImage ? (t.statusMessages?.syncing || "SYNCHRONIZING WITH PLANTNET ARCHIVE...") : (t.statusMessages?.retrieving || "RETRIEVING SPECIMEN IMAGERY...")}
+                                {isSearchingImages ? "QUERYING GOOGLE IMAGE SEARCH..." : (isGeneratingImage ? (t.statusMessages?.syncing || "SYNCHRONIZING WITH PLANTNET ARCHIVE...") : (t.statusMessages?.retrieving || "RETRIEVING SPECIMEN IMAGERY..."))}
                             </p>
                         </div>
                     ) : (
-                        <SpecimenCarousel images={plant.picture_urls || [plant.picture_url]} name={plant.scientific_name} />
+                        <div style={{ position: 'relative' }}>
+                            <SpecimenCarousel
+                                images={customImages || plant.picture_urls || [plant.picture_url]}
+                                name={plant.scientific_name}
+                            />
+                            {isShowingCustomImages && (
+                                <div className="mono" style={{
+                                    position: 'absolute',
+                                    top: '15px',
+                                    right: '15px',
+                                    zIndex: 20,
+                                    fontSize: '0.6rem',
+                                    background: 'rgba(5, 12, 16, 0.7)',
+                                    color: 'var(--accent-color)',
+                                    padding: '2px 6px',
+                                    border: '1px solid var(--accent-color)',
+                                    backdropFilter: 'blur(4px)'
+                                }}>
+                                    SEARCH OVERRIDE ACTIVE
+                                </div>
+                            )}
+                        </div>
                     )}
 
                     {/* Chart below image */}
@@ -244,9 +294,50 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
                                 <Database size={16} color="var(--accent-color)" />
                                 <span className="mono" style={{ fontSize: '0.8rem', letterSpacing: '1px' }}>  {t.tabs.knownVarieties.toUpperCase()}</span>
                             </div>
-                            <p className="mono" style={{ fontSize: '0.8rem', color: 'var(--text-primary)' }}>
-                                {renderValue(currentData.varieties, t.statusMessages?.noVarieties || 'NO ADDITIONAL VARIETIES DOCUMENTED IN ARCHIVE.')}
-                            </p>
+                            <div className="mono" style={{ fontSize: '0.8rem', color: 'var(--text-primary)', display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                                {currentData.varieties ? (
+                                    (Array.isArray(currentData.varieties) ? currentData.varieties : String(currentData.varieties).split(',')).map((variety, idx) => {
+                                        const cleanVar = String(variety).trim();
+                                        if (!cleanVar) return null;
+                                        return (
+                                            <button
+                                                key={idx}
+                                                onClick={() => handleImageSearch(cleanVar)}
+                                                disabled={isSearchingImages}
+                                                style={{
+                                                    background: 'rgba(255,255,255,0.05)',
+                                                    border: '1px solid rgba(0, 242, 255, 0.4)',
+                                                    color: 'var(--text-primary)',
+                                                    padding: '4px 10px',
+                                                    borderRadius: '15px',
+                                                    cursor: isSearchingImages ? 'not-allowed' : 'pointer',
+                                                    fontSize: '0.75rem',
+                                                    transition: 'all 0.2s',
+                                                    opacity: isSearchingImages ? 0.5 : 1
+                                                }}
+                                                onMouseOver={(e) => {
+                                                    if (!isSearchingImages) {
+                                                        e.target.style.background = 'rgba(0, 242, 255, 0.1)';
+                                                        e.target.style.color = 'var(--accent-color)';
+                                                    }
+                                                }}
+                                                onMouseOut={(e) => {
+                                                    if (!isSearchingImages) {
+                                                        e.target.style.background = 'rgba(255,255,255,0.05)';
+                                                        e.target.style.color = 'var(--text-primary)';
+                                                    }
+                                                }}
+                                            >
+                                                {cleanVar.toUpperCase()}
+                                            </button>
+                                        );
+                                    })
+                                ) : (
+                                    <span style={{ color: 'var(--text-secondary)' }}>
+                                        {t.statusMessages?.noVarieties || 'NO ADDITIONAL VARIETIES DOCUMENTED IN ARCHIVE.'}
+                                    </span>
+                                )}
+                            </div>
                         </div>
 
                         {(() => {

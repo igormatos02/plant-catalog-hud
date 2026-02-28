@@ -122,6 +122,37 @@ export const getCompletePlantData = async (scientificName, language = import.met
     }
 };
 
+export const fetchGoogleImages = async (query) => {
+    const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
+    const cx = import.meta.env.VITE_GOOGLE_CX;
+
+    if (!apiKey || !cx) {
+        console.error("[Google Search] VITE_GOOGLE_API_KEY or VITE_GOOGLE_CX missing.");
+        return null;
+    }
+
+    try {
+        const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(query)}&cx=${cx}&key=${apiKey}&searchType=image&num=5`;
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            console.error("[Google Search] Search failed with status:", response.status);
+            return null;
+        }
+
+        const data = await response.json();
+
+        if (data.items && data.items.length > 0) {
+            return data.items.map(item => item.link);
+        }
+
+        return null;
+    } catch (error) {
+        console.error("[Google Search] API fetch failed:", error);
+        return null;
+    }
+};
+
 export const searchPlants = async (query, language = import.meta.env.VITE_DEFAULT_LANGUAGE || 'en') => {
     if (!API_KEY) {
         console.error("[Gemini] API Key missing. Please set VITE_GEMINI_API_KEY in .env");
