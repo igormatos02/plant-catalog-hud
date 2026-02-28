@@ -213,18 +213,68 @@ export const generateVisualPdf = async (plant, t, setProgress) => {
                     const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
                     let heightLeft = imgHeight;
-                    let position = 0;
+                    let contentConsumed = 0;
 
-                    // First page
-                    pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
-                    heightLeft -= pageHeight;
+                    const footerSpace = 15; // mm at the bottom reserved for footer
+                    const headerSpace = 15; // mm at the top reserved for header
+
+                    // First page: draws from top (0)
+                    // We only consume (pageHeight - footerSpace) units of the image per page
+                    pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, imgHeight);
+
+                    const firstPageHeight = pageHeight - footerSpace;
+                    contentConsumed += firstPageHeight;
+                    heightLeft -= firstPageHeight;
 
                     // Subsequent pages
                     while (heightLeft > 0) {
-                        position = heightLeft - imgHeight;
+                        // For page 2+, we shift UP by contentConsumed, and DOWN by headerSpace
+                        const position = -contentConsumed + headerSpace;
+
                         pdf.addPage();
+
                         pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
-                        heightLeft -= pageHeight;
+
+                        const usableHeight = pageHeight - footerSpace - headerSpace;
+                        contentConsumed += usableHeight;
+                        heightLeft -= usableHeight;
+                    }
+
+                    // Add Header & Footer (Date and Page Numbers)
+                    const totalPages = pdf.internal.getNumberOfPages();
+                    const dateStr = new Date().toLocaleDateString(navigator.language || 'pt-BR', {
+                        day: '2-digit', month: '2-digit', year: 'numeric'
+                    });
+
+                    for (let i = 1; i <= totalPages; i++) {
+                        pdf.setPage(i);
+
+                        // Footer background mask
+                        pdf.setFillColor(255, 255, 255);
+                        pdf.rect(0, pageHeight - 12, pdfWidth, 12, 'F');
+
+                        // Header background mask ONLY on page 2+
+                        if (i > 1) {
+                            pdf.rect(0, 0, pdfWidth, headerSpace, 'F');
+
+                            pdf.setFontSize(10);
+                            pdf.setTextColor(0, 172, 193); // #00acc1 (Accent color)
+                            pdf.setFont('helvetica', 'bold');
+                            const plantName = plant.popular_name?.toUpperCase() || 'SPECIMEN';
+                            pdf.text(`AG. Botanics // ${plantName}`, 15, 12);
+                        }
+
+                        pdf.setFontSize(8);
+                        pdf.setTextColor(150, 150, 150); // Light gray
+                        pdf.setFont('helvetica', 'normal');
+
+                        // Date on left
+                        pdf.text(`Generated on ${dateStr}`, 15, pageHeight - 5);
+
+                        // Page x of y on right
+                        const pageText = `Page ${i} of ${totalPages}`;
+                        const textWidth = pdf.getStringUnitWidth(pageText) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
+                        pdf.text(pageText, pdfWidth - textWidth - 15, pageHeight - 5);
                     }
 
                     pdf.save(`AG_VISUAL_${plant.popular_name?.replace(/[^a-z0-9]/gi, '_').toUpperCase() || 'SPECIMEN'}.pdf`);
