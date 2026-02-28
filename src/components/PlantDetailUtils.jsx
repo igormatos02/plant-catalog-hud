@@ -8,21 +8,34 @@ export const renderValue = (val, fallback = '---') => {
     return String(val);
 };
 
+export const parseToxicity = (level) => {
+    if (level === undefined || level === null) return 0;
+    // Try to extract a number first
+    const match = String(level).match(/\d+/);
+    if (match) {
+        return Math.min(Number(match[0]), 5);
+    }
+    // Fallback for text-based levels
+    const lower = String(level).toLowerCase();
+    if (lower.includes('high') || lower.includes('alto') || lower.includes('alta') || lower.includes('sever')) return 5;
+    if (lower.includes('medium') || lower.includes('médio') || lower.includes('media') || lower.includes('moderad')) return 3;
+    if (lower.includes('low') || lower.includes('baixo') || lower.includes('baixa') || lower.includes('mild')) return 2;
+    return 0;
+};
+
 export const getToxicityColor = (level) => {
-    const lvl = Number(level);
+    const lvl = parseToxicity(level);
     switch (lvl) {
         case 1:
-            return '#00ff9d'; // Neon Green
         case 2:
-            return '#a3e635'; // Lime Green
+            return '#00ff9d'; // Green
         case 3:
-            return '#facc15'; // Cyber Yellow
         case 4:
-            return '#fb923c'; // Neon Orange
+            return '#fb923c'; // Orange
         case 5:
-            return '#fa4e67'; // Cyber Red/Pink (Design Match)
+            return '#ff3e3e'; // Red
         default:
-            return 'var(--text-secondary)';
+            return 'var(--text-secondary)'; // Gray
     }
 };
 

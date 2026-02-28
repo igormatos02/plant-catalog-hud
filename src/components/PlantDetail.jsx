@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Loader2, Database } from 'lucide-react';
+import { Search, Loader2, Database, RefreshCw, AlertTriangle, Skull } from 'lucide-react';
 import { translations } from '../lib/translations';
 import { getCompletePlantData } from '../lib/gemini';
-import { renderValue } from './PlantDetailUtils';
+import { renderValue, parseToxicity, getToxicityColor } from './PlantDetailUtils';
 
 // Import Tab Components
 import GeneralTab from './tabs/GeneralTab';
@@ -63,6 +63,22 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
         setActiveTab(tabId);
     };
 
+    const handleRefreshData = async () => {
+        if (!plant?.scientific_name) return;
+
+        setIsDetailsLoading(true);
+        try {
+            const data = await getCompletePlantData(plant.scientific_name, language, true);
+            if (data) {
+                setFullPlantData(data);
+            }
+        } catch (err) {
+            console.error(`[PlantDetail] Failed to refresh data:`, err);
+        } finally {
+            setIsDetailsLoading(false);
+        }
+    };
+
     if (isLoading) {
         return (
             <div style={{ height: '70vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
@@ -101,9 +117,9 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
             case 'botany':
                 return <BotanyTab data={currentData.botany || currentData} t={t} />;
             case 'culinary':
-                return <CulinaryTab data={currentData.culinary || currentData} t={t} />;
+                return <CulinaryTab data={currentData.culinary || currentData} fullData={currentData} t={t} />;
             case 'medical':
-                return <MedicalTab data={currentData.medical || currentData} t={t} />;
+                return <MedicalTab data={currentData.medical || currentData} fullData={currentData} t={t} />;
             case 'cultivation':
                 return <CultivationTab data={currentData.cultivation || currentData} t={t} />;
             case 'health':
@@ -147,7 +163,6 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
                             flexDirection: 'column',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            background: 'rgba(5, 12, 16, 0.9)',
                             backdropFilter: 'blur(10px)'
                         }}>
                             <Loader2 className="animate-spin" size={32} color="var(--accent-color)" />
@@ -177,11 +192,35 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
                             <h1 style={{ fontSize: '3.5rem', fontWeight: 800, margin: '10px 0', letterSpacing: '-1px' }}>
                                 {plant.scientific_name?.toUpperCase() || 'UNKNOWN_SPECIMEN'}
                             </h1>
-                            <ReportGenerator
-                                plant={currentData}
-                                currentLanguage={language}
-                                t={t}
-                            />
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                                {import.meta.env.VITE_SHOW_REFRESH === 'true' && (
+                                    <button
+                                        onClick={handleRefreshData}
+                                        disabled={isDetailsLoading}
+                                        title={t.refreshData || "Refresh API Data from Gemini"}
+                                        style={{
+                                            background: 'rgba(0, 242, 255, 0.1)',
+                                            border: '1px solid var(--accent-color)',
+                                            borderRadius: '4px',
+                                            color: 'var(--accent-color)',
+                                            padding: '8px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            cursor: isDetailsLoading ? 'not-allowed' : 'pointer',
+                                            transition: 'all 0.3s ease',
+                                            opacity: isDetailsLoading ? 0.5 : 1
+                                        }}
+                                    >
+                                        <RefreshCw size={20} className={isDetailsLoading ? "animate-spin" : ""} />
+                                    </button>
+                                )}
+                                <ReportGenerator
+                                    plant={currentData}
+                                    currentLanguage={language}
+                                    t={t}
+                                />
+                            </div>
                         </div>
                         <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap', marginBottom: '20px' }}>
                             <div className="mono" style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--text-secondary)', padding: '10px 10px', fontSize: '0.8rem', border: '1px solid rgba(255,255,255,0.1)' }}>
@@ -209,6 +248,54 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
                                 {renderValue(currentData.varieties, t.statusMessages?.noVarieties || 'NO ADDITIONAL VARIETIES DOCUMENTED IN ARCHIVE.')}
                             </p>
                         </div>
+
+                        {(() => {
+                            const tLevel = parseToxicity(currentData?.metadata?.toxicity_level);
+                            const tColor = getToxicityColor(tLevel);
+                            if (tLevel < 3) return null;
+                            return (
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'start',
+                                    gap: '15px',
+                                    padding: '15px',
+                                    background: `${tColor}15`,
+                                    border: `1px solid ${tColor}40`,
+                                    marginBottom: '20px',
+                                    borderRadius: '4px'
+                                }}>
+                                    <div style={{
+                                        background: tColor,
+                                        padding: '8px',
+                                        borderRadius: '4px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
+                                    }}>
+                                        {tLevel >= 4 ? <Skull size={20} color="#000" /> : <AlertTriangle size={20} color="#000" />}
+                                    </div>
+                                    <div>
+                                        <div className="mono" style={{
+                                            color: tColor,
+                                            fontWeight: 'bold',
+                                            fontSize: '0.8rem',
+                                            letterSpacing: '1px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '5px'
+                                        }}>
+                                            <AlertTriangle size={14} />
+                                            {(tLevel >= 3 ? t.metrics.danger : t.metrics.caution).toUpperCase()}
+                                        </div>
+                                        <p className="mono" style={{ fontSize: '0.7rem', color: 'var(--text-primary)', marginTop: '4px' }}>
+                                            <span style={{ color: tColor, fontWeight: 'bold' }}>
+                                                Toxicidade {tLevel >= 5 ? 'extremamente alta' : tLevel >= 4 ? 'alta' : 'moderada'}.
+                                            </span> {currentData?.metadata?.toxicity}
+                                        </p>
+                                    </div>
+                                </div>
+                            );
+                        })()}
 
                         <div style={{
                             display: 'flex',

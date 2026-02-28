@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FileDown, Loader2 } from 'lucide-react';
+import { FileDown, Loader2, ChevronDown } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import { getPlantPdfReportData } from '../lib/gemini';
 
@@ -262,7 +262,7 @@ const ReportGenerator = ({ plant, currentLanguage, t }) => {
             pdf.text(`TIMESTAMP: ${new Date().toLocaleString()}`, pageWidth - 70, pageHeight - 10);
 
             // 4. Download
-            pdf.save(`AG_REPORT_${reportData.popular_name.replace(/[^a-z0-9]/gi, '_').toUpperCase()}.pdf`);
+            pdf.save(`AG_REPORT_${reportData.popular_name?.replace(/[^a-z0-9]/gi, '_').toUpperCase() || 'SPECIMEN'}.pdf`);
             setIsGenerating(false);
             setProgress('');
 
@@ -273,10 +273,39 @@ const ReportGenerator = ({ plant, currentLanguage, t }) => {
         }
     };
 
+    const handleVisualPdf = async () => {
+        setIsGenerating(true);
+        setShowDropdown(false);
+        try {
+            const reportData = await gatherReportData();
+            const { generateVisualPdf } = await import('./VisualReportGenerator');
+            await generateVisualPdf(reportData, t, setProgress);
+            setIsGenerating(false);
+            setProgress('');
+        } catch (error) {
+            console.error('[VisualPDF] Error:', error);
+            setIsGenerating(false);
+            setProgress('ERROR_SCAN_FAILED');
+        }
+    };
+
+    const [showDropdown, setShowDropdown] = useState(false);
+    const dropdownRef = React.useRef(null);
+
+    React.useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setShowDropdown(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
     return (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', position: 'relative' }} ref={dropdownRef}>
             <button
-                onClick={generatePdf}
+                onClick={() => setShowDropdown(!showDropdown)}
                 disabled={isGenerating}
                 className="mono"
                 style={{
@@ -296,7 +325,65 @@ const ReportGenerator = ({ plant, currentLanguage, t }) => {
             >
                 {isGenerating ? <Loader2 className="spin" size={14} /> : <FileDown size={14} />}
                 {isGenerating ? 'PROCESSING...' : (t.downloadPdf ? t.downloadPdf.toUpperCase() : 'DOWNLOAD PDF')}
+                <ChevronDown size={14} style={{ transform: showDropdown ? 'rotate(180deg)' : 'rotate(0)' }} />
             </button>
+
+            {showDropdown && !isGenerating && (
+                <div style={{
+                    position: 'absolute',
+                    top: '100%',
+                    right: 0,
+                    marginTop: '5px',
+                    background: 'var(--bg-secondary)',
+                    border: '1px solid rgba(0, 172, 193, 0.4)',
+                    borderRadius: '4px',
+                    padding: '5px',
+                    zIndex: 100,
+                    minWidth: '200px',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '2px'
+                }}>
+                    <button
+                        onClick={() => { setShowDropdown(false); generatePdf(); }}
+                        className="mono"
+                        style={{
+                            padding: '10px',
+                            background: 'transparent',
+                            color: 'var(--text-primary)',
+                            border: 'none',
+                            textAlign: 'left',
+                            fontSize: '0.75rem',
+                            cursor: 'pointer',
+                            borderRadius: '2px'
+                        }}
+                        onMouseOver={(e) => e.target.style.background = 'rgba(0, 172, 193, 0.1)'}
+                        onMouseOut={(e) => e.target.style.background = 'transparent'}
+                    >
+                        {t.descriptivePdf?.toUpperCase() || 'DESCRIPTIVE PDF'}
+                    </button>
+                    <button
+                        onClick={handleVisualPdf}
+                        className="mono"
+                        style={{
+                            padding: '10px',
+                            background: 'transparent',
+                            color: 'var(--text-primary)',
+                            border: 'none',
+                            textAlign: 'left',
+                            fontSize: '0.75rem',
+                            cursor: 'pointer',
+                            borderRadius: '2px'
+                        }}
+                        onMouseOver={(e) => e.target.style.background = 'rgba(0, 172, 193, 0.1)'}
+                        onMouseOut={(e) => e.target.style.background = 'transparent'}
+                    >
+                        {t.visualPdf?.toUpperCase() || 'VISUAL PDF'}
+                    </button>
+                </div>
+            )}
+
             {progress && (
                 <div className="mono" style={{ fontSize: '0.65rem', color: '#00acc1' }}>
                     {progress}

@@ -1,8 +1,8 @@
 import React from 'react';
-import { Utensils, Skull, AlertTriangle, Coffee, Droplet } from 'lucide-react';
-import { renderValue, getToxicityColor } from '../PlantDetailUtils';
+import { Utensils, Skull, AlertTriangle, Coffee, Droplet, Leaf, CircleDot, Apple, GitCommit } from 'lucide-react';
+import { renderValue, getToxicityColor, parseToxicity } from '../PlantDetailUtils';
 
-const PartBox = ({ title, content, hasTea, hasOil, t }) => {
+const PartBox = ({ title, content, hasTea, hasOil, t, icon: Icon, color = 'var(--accent-color)' }) => {
     if (!content ||
         content.toUpperCase().includes('NOT_APPLICABLE') ||
         content.toLowerCase().includes('não comumente') ||
@@ -11,9 +11,12 @@ const PartBox = ({ title, content, hasTea, hasOil, t }) => {
         content.toLowerCase().includes('---')) return null;
 
     return (
-        <div className="glass-panel" style={{ padding: '20px', width: '100%', marginBottom: '10px', borderLeft: '2px solid var(--accent-color)' }}>
+        <div className="glass-panel" style={{ padding: '20px', width: '100%', marginBottom: '10px', borderLeft: `3px solid ${color}` }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                <h4 className="mono" style={{ margin: 0, fontSize: '0.7rem', color: 'var(--accent-color)', letterSpacing: '1px' }}>{title.toUpperCase()}</h4>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    {Icon && <Icon size={14} color={color} />}
+                    <h4 className="mono" style={{ margin: 0, fontSize: '0.7rem', color: color, letterSpacing: '1px' }}>{title.toUpperCase()}</h4>
+                </div>
                 <div style={{ display: 'flex', gap: '8px' }}>
                     {hasTea && (
                         <div className="mono" style={{
@@ -42,13 +45,14 @@ const PartBox = ({ title, content, hasTea, hasOil, t }) => {
     );
 };
 
-const CulinaryTab = ({ data, t }) => {
-    const toxicityLevel = Number(data.metadata?.toxicity_level || 1);
+const CulinaryTab = ({ data, fullData, t }) => {
+    const meta = fullData?.metadata || data.metadata;
+    const toxicityLevel = parseToxicity(meta?.toxicity_level);
     const isToxic = toxicityLevel > 1;
     const warningColor = getToxicityColor(toxicityLevel);
 
     return (
-        <div>
+        <div style={{ animation: 'fadeIn 0.5s ease' }}>
             <div className="glass-panel" style={{ padding: '30px', marginBottom: '10px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
                     <Utensils size={24} color="var(--accent-color)" />
@@ -59,53 +63,25 @@ const CulinaryTab = ({ data, t }) => {
                 </p>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '10px' }}>
-                <PartBox title={t.culinaryParts.leaves} content={data.culinary_leaves} hasTea={data.leaves_makes_tea} hasOil={data.leaves_makes_oil} t={t} />
-                <PartBox title={t.culinaryParts.seeds} content={data.culinary_seeds} hasTea={data.seeds_makes_tea} hasOil={data.seeds_makes_oil} t={t} />
-                <PartBox title={t.culinaryParts.fruits} content={data.culinary_fruits} hasTea={data.fruits_makes_tea} hasOil={data.fruits_makes_oil} t={t} />
-                <PartBox title={t.culinaryParts.stem} content={data.culinary_stem} hasTea={data.stem_makes_tea} hasOil={data.stem_makes_oil} t={t} />
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '15px', marginTop: '15px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <PartBox title={t.culinaryParts.leaves} content={data.culinary_leaves} hasTea={data.leaves_makes_tea} hasOil={data.leaves_makes_oil} t={t} icon={Leaf} color="#10b981" />
+                    <PartBox title={t.culinaryParts.seeds} content={data.culinary_seeds} hasTea={data.seeds_makes_tea} hasOil={data.seeds_makes_oil} t={t} icon={CircleDot} color="#ffb700" />
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <PartBox title={t.culinaryParts.fruits} content={data.culinary_fruits} hasTea={data.fruits_makes_tea} hasOil={data.fruits_makes_oil} t={t} icon={Apple} color="#ef4444" />
+                    <PartBox title={t.culinaryParts.stem} content={data.culinary_stem} hasTea={data.stem_makes_tea} hasOil={data.stem_makes_oil} t={t} icon={GitCommit} color="var(--accent-color)" />
+                </div>
             </div>
 
-            {isToxic && (
-                <div style={{
-                    display: 'flex',
-                    alignItems: 'start',
-                    gap: '15px',
-                    padding: '15px',
-                    background: `${warningColor}15`,
-                    border: `1px solid ${warningColor}40`,
-                    marginBottom: '20px',
-                    borderRadius: '4px'
-                }}>
-                    <div style={{
-                        background: warningColor,
-                        padding: '8px',
-                        borderRadius: '4px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }}>
-                        {toxicityLevel >= 4 ? <Skull size={20} color="#000" /> : <AlertTriangle size={20} color="#000" />}
-                    </div>
-                    <div>
-                        <div className="mono" style={{
-                            color: warningColor,
-                            fontWeight: 'bold',
-                            fontSize: '0.8rem',
-                            letterSpacing: '1px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '5px'
-                        }}>
-                            <AlertTriangle size={14} />
-                            {(toxicityLevel >= 3 ? t.metrics.danger : t.metrics.caution).toUpperCase()}
-                        </div>
-                        <p className="mono" style={{ fontSize: '0.7rem', color: 'var(--text-primary)', marginTop: '4px' }}>
-                            {data.metadata?.toxicity || t.warnings.culinary}
-                        </p>
-                    </div>
-                </div>
-            )}
+            <style dangerouslySetInnerHTML={{
+                __html: `
+                @keyframes fadeIn {
+                    from { opacity: 0; transform: translateY(10px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+            `}} />
+
         </div>
     );
 };

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Heart, Pipette, Coffee, Skull, AlertTriangle } from 'lucide-react';
-import { renderValue, getToxicityColor } from '../PlantDetailUtils';
+import { renderValue, getToxicityColor, parseToxicity } from '../PlantDetailUtils';
 
 const PartBox = ({ title, content, color = 'var(--accent-color)', icon: Icon }) => {
     if (!content ||
@@ -23,8 +23,9 @@ const PartBox = ({ title, content, color = 'var(--accent-color)', icon: Icon }) 
     );
 };
 
-const MedicalTab = ({ data, t }) => {
-    const toxicityLevel = Number(data.metadata?.toxicity_level || 1);
+const MedicalTab = ({ data, fullData, t }) => {
+    const meta = fullData?.metadata || data.metadata;
+    const toxicityLevel = parseToxicity(meta?.toxicity_level);
     const isToxic = toxicityLevel > 1;
     const warningColor = getToxicityColor(toxicityLevel);
 
@@ -49,46 +50,6 @@ const MedicalTab = ({ data, t }) => {
                 <PartBox title={t.subproducts.others} content={data.other_subproducts} color="var(--text-secondary)" icon={Pipette} />
             </div>
 
-            {isToxic && (
-                <div style={{
-                    display: 'flex',
-                    alignItems: 'start',
-                    gap: '15px',
-                    padding: '15px',
-                    background: `${warningColor}15`,
-                    border: `1px solid ${warningColor}40`,
-                    marginBottom: '20px',
-                    borderRadius: '4px'
-                }}>
-                    <div style={{
-                        background: warningColor,
-                        padding: '8px',
-                        borderRadius: '4px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }}>
-                        {toxicityLevel >= 4 ? <Skull size={20} color="#000" /> : <AlertTriangle size={20} color="#000" />}
-                    </div>
-                    <div>
-                        <div className="mono" style={{
-                            color: warningColor,
-                            fontWeight: 'bold',
-                            fontSize: '0.8rem',
-                            letterSpacing: '1px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '5px'
-                        }}>
-                            <AlertTriangle size={14} />
-                            {(toxicityLevel >= 3 ? t.metrics.danger : t.metrics.caution).toUpperCase()}
-                        </div>
-                        <p className="mono" style={{ fontSize: '0.7rem', color: 'var(--text-primary)', marginTop: '4px' }}>
-                            {data.metadata?.toxicity || t.warnings.medical}
-                        </p>
-                    </div>
-                </div>
-            )}
         </div>
 
     );

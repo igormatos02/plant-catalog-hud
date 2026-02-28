@@ -37,26 +37,30 @@ const normalizePlantData = (data, scientificName) => {
     };
 };
 
-export const getCompletePlantData = async (scientificName, language = import.meta.env.VITE_DEFAULT_LANGUAGE || 'en') => {
+export const getCompletePlantData = async (scientificName, language = import.meta.env.VITE_DEFAULT_LANGUAGE || 'en', forceRefresh = false) => {
     if (!API_KEY) return null;
 
     const langName = getLanguageName(language);
 
     // 1. Try to load from Supabase first
-    try {
-        const { data: cachedData, error: fetchError } = await supabase
-            .from('plant_cache')
-            .select('data')
-            .eq('scientific_name', scientificName)
-            .eq('language', language)
-            .single();
+    if (!forceRefresh) {
+        try {
+            const { data: cachedData, error: fetchError } = await supabase
+                .from('plant_cache')
+                .select('data')
+                .eq('scientific_name', scientificName)
+                .eq('language', language)
+                .single();
 
-        if (cachedData && !fetchError) {
-            console.log(`[Supabase] Data retrieved from cache for ${scientificName} (${language})`);
-            return normalizePlantData(cachedData.data, scientificName);
+            if (cachedData && !fetchError) {
+                console.log(`[Supabase] Data retrieved from cache for ${scientificName} (${language})`);
+                return normalizePlantData(cachedData.data, scientificName);
+            }
+        } catch (err) {
+            console.warn("[Supabase] Cache fetch failed, proceeding to Gemini:", err.message);
         }
-    } catch (err) {
-        console.warn("[Supabase] Cache fetch failed, proceeding to Gemini:", err.message);
+    } else {
+        console.log(`[Cache Bypass] Forcing refresh for ${scientificName} (${language}) from Gemini`);
     }
 
     // 2. If not in cache, fetch from Gemini
@@ -66,7 +70,7 @@ export const getCompletePlantData = async (scientificName, language = import.met
     - class, order, genus, family, species (taxonomy)
     - description: technical HUD-style summary (${langName})
     - varieties: known sub-species names (${langName})
-    - metadata: { humidity, gbifId, temperature, light, toxicity, toxicity_level, size, type, time_to_adult, lifespan }
+    - metadata: { humidity, gbifId, temperature, light, toxicity, toxicity_level (must be an integer from 1 to 5), size, type, time_to_adult, lifespan, native_to }
     - lifecycle: 12 objects (January-December) with fields: month, fructification (0-10), flowering (0-10), foliage (0-10), pruning (0-10), is_rain_season, is_sun_season.
     - botany: { botanical_description, foliage, flower, fruit, seed, root, stem, fragrance, leaves, pollinationType, plantType }
     - culinary: { culinary_use, culinary_leaves, culinary_seeds, culinary_fruits, culinary_stem, part_makes_tea, part_makes_oil }
@@ -222,7 +226,7 @@ export const getPlantPdfReportData = async (scientificName, language = import.me
     - popular_name: common name.
     - description: technical/poetic summary.
     - taxonomy: { class, order, family, genus }
-    - metadata: { humidity, temperature, light, toxicity, toxicity_level, gbifId, time_to_adult, lifespan }
+    - metadata: { humidity, temperature, light, toxicity, toxicity_level (must be an integer from 1 to 5), size, time_to_adult, lifespan, native_to }
     - culinary: { culinary_use, culinary_leaves, culinary_seeds, culinary_fruits, culinary_stem }
     - medical: { therapeutic_use, oils_and_florals, tea, perfume, soap, sachets }
     - cultivation: { cultivation, soil, drainage, propagation, symbiosis, pruning }

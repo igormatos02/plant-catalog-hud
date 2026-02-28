@@ -11,8 +11,9 @@ export const translations = {
         backToSearch: "BACK TO SEARCH",
         initiatingDiscovery: "INITIATING GLOBAL ARCHIVE DISCOVERY...",
         aiProcessing: "ENGINE: PROCESSING_BOTANICAL_QUERY",
-        decryptingSpecimen: "NEURAL LINK ESTABLISHED: DECRYPTING SPECIMEN DATA...",
         downloadPdf: "Download PDF Report",
+        descriptivePdf: "Descriptive PDF",
+        visualPdf: "Visual PDF",
         tabs: {
             geral: "General",
             class: "Class",
@@ -40,6 +41,7 @@ export const translations = {
             lifespan: "EXPECTED LIFESPAN",
             pruning: "PRUNING",
             plantingSeason: "PLANTING SEASON",
+            origin: "ORIGIN",
             caution: "CAUTION",
             danger: "DANGER",
             health: {
@@ -153,8 +155,9 @@ export const translations = {
         backToSearch: "VOLTAR À PESQUISA",
         initiatingDiscovery: "INICIANDO DESCOBERTA DE ARQUIVO GLOBAL...",
         aiProcessing: "MOTOR: PROCESSANDO CONSULTA BOTÂNICA",
-        decryptingSpecimen: "LINK NEURAL ESTABELECIDO: DESCRIPTOGRAFANDO DADOS DO ESPÉCIME...",
         downloadPdf: "Baixar Relatório PDF",
+        descriptivePdf: "PDF Descritivo",
+        visualPdf: "PDF Visual",
         tabs: {
             geral: "Geral",
             class: "Classe",
@@ -182,6 +185,7 @@ export const translations = {
             lifespan: "EXPECTATIVA DE VIDA",
             pruning: "PODA",
             plantingSeason: "ESTAÇÃO DE PLANTIO",
+            origin: "ORIGEM",
             caution: "CUIDADO",
             danger: "PERIGO",
             health: {
@@ -324,6 +328,7 @@ export const translations = {
             lifespan: "ODOTETTU ELINIKÄ",
             pruning: "LEIKKAUS",
             plantingSeason: "ISTUTUSKAUSI",
+            origin: "ALKUPERÄ",
             caution: "VAROITUS",
             danger: "VAARA",
             health: {
@@ -407,6 +412,7 @@ export const translations = {
             lifespan: "LEBENSDAUER",
             pruning: "BESCHNITT",
             plantingSeason: "PFLANZZEIT",
+            origin: "HERKUNFT",
             caution: "VORSICHT",
             danger: "GEFAHR",
             health: {
@@ -490,6 +496,7 @@ export const translations = {
             lifespan: "ОЧІКУВАНА ТРИВАЛІСТЬ ЖИТТЯ",
             pruning: "ОБРІЗКА",
             plantingSeason: "СЕЗОН ПОСАДКИ",
+            origin: "ПОХОДЖЕННЯ",
             caution: "ОБЕРЕЖНО",
             danger: "НЕБЕЗПЕКА",
             health: {
@@ -573,6 +580,7 @@ export const translations = {
             lifespan: "မျှော်မှန်းသက်တမ်း",
             pruning: "ကိုင်းဖြတ်ခြင်း",
             plantingSeason: "စိုက်ပျိုးရာသီ",
+            origin: "မူရင်း",
             caution: "သတိပြုရန်",
             danger: "အန္တရာယ်ရှိသည်",
             health: {

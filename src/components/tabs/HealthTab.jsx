@@ -57,13 +57,13 @@ const HealthTab = ({ data, t }) => {
                     <DiagnosticCard
                         title={healthT.oversun || "Excessive Sun"}
                         content={data.oversun}
-                        color="#fbbf24"
+                        color="#f59e0b"
                         icon={Sun}
                     />
                     <DiagnosticCard
                         title={healthT.undersun || "Lack of Sun"}
                         content={data.undersun}
-                        color="#f59e0b"
+                        color="#fbbf24"
                         icon={CloudMoon}
                     />
                 </div>
@@ -72,13 +72,13 @@ const HealthTab = ({ data, t }) => {
                     <DiagnosticCard
                         title={healthT.nutrients || "Nutrient Deficiency"}
                         content={data.nutrients}
-                        color="#a855f7"
+                        color="#999999"
                         icon={Shell}
                     />
                     <DiagnosticCard
                         title={healthT.fungi || "Fungal Issues"}
                         content={data.fungi}
-                        color="#ec4899"
+                        color="#ef4444"
                         icon={Microscope}
                     />
                     <DiagnosticCard

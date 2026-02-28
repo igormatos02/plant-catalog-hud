@@ -3,7 +3,7 @@ import { LayoutGrid, Info, ChevronLeft, ChevronRight, Leaf } from 'lucide-react'
 import { translations } from '../lib/translations';
 
 const Sidebar = ({ activePage, setActivePage, language }) => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const t = translations[language] || translations.en;
 
   const menuItems = [
