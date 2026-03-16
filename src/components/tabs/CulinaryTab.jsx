@@ -38,18 +38,38 @@ const PartBox = ({ title, content, hasTea, hasOil, t, icon: Icon, color = 'var(-
                     )}
                 </div>
             </div>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: '1.6', margin: 0 }}>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: '1.6', margin: 0, paddingLeft: '22px' }}>
                 {content}
             </p>
         </div>
     );
 };
 
-const CulinaryTab = ({ data, fullData, t }) => {
+const CulinaryTab = ({ data, fullData, t, isPdfReport }) => {
     const meta = fullData?.metadata || data.metadata;
     const toxicityLevel = parseToxicity(meta?.toxicity_level);
     const isToxic = toxicityLevel > 1;
     const warningColor = getToxicityColor(toxicityLevel);
+
+    if (isPdfReport) {
+        return (
+            <div style={{ borderTop: '2px solid #00acc1', paddingTop: '15px', marginTop: '5px', color: 'var(--text-primary)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+                    <Utensils size={18} color="var(--accent-color)" />
+                    <h3 className="mono" style={{ margin: 0, fontSize: '0.8rem', letterSpacing: '2px' }}>{t.culinaryLabels?.archive?.toUpperCase() || 'CULINARY USE ARCHIVE'}</h3>
+                </div>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: '1.8', margin: '0 0 10px 0', paddingLeft: '30px' }}>
+                    {renderValue(data.culinary_use, t.culinaryLabels?.noData || 'NO DATA AVAILABLE FOR CULINARY APPLICATIONS.')}
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingLeft: '30px' }}>
+                    {data.culinary_leaves && data.culinary_leaves !== 'NOT_APPLICABLE' && <div><strong className="mono" style={{ fontSize: '0.7rem', color: '#10b981' }}>{t.culinaryParts.leaves.toUpperCase()}:</strong> <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: '1.6' }}>{data.culinary_leaves}</span></div>}
+                    {data.culinary_seeds && data.culinary_seeds !== 'NOT_APPLICABLE' && <div><strong className="mono" style={{ fontSize: '0.7rem', color: '#ffb700' }}>{t.culinaryParts.seeds.toUpperCase()}:</strong> <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: '1.6' }}>{data.culinary_seeds}</span></div>}
+                    {data.culinary_fruits && data.culinary_fruits !== 'NOT_APPLICABLE' && <div><strong className="mono" style={{ fontSize: '0.7rem', color: '#ef4444' }}>{t.culinaryParts.fruits.toUpperCase()}:</strong> <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: '1.6' }}>{data.culinary_fruits}</span></div>}
+                    {data.culinary_stem && data.culinary_stem !== 'NOT_APPLICABLE' && <div><strong className="mono" style={{ fontSize: '0.7rem', color: 'var(--accent-color)' }}>{t.culinaryParts.stem.toUpperCase()}:</strong> <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: '1.6' }}>{data.culinary_stem}</span></div>}
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div style={{ animation: 'fadeIn 0.5s ease' }}>
@@ -58,7 +78,7 @@ const CulinaryTab = ({ data, fullData, t }) => {
                     <Utensils size={24} color="var(--accent-color)" />
                     <h3 className="mono" style={{ margin: 0, fontSize: '0.8rem', letterSpacing: '2px' }}>{t.culinaryLabels?.archive || 'CULINARY USE ARCHIVE'}</h3>
                 </div>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: '1.8' }}>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: '1.8', paddingLeft: '36px' }}>
                     {renderValue(data.culinary_use, t.culinaryLabels?.noData || 'NO DATA AVAILABLE FOR CULINARY APPLICATIONS.')}
                 </p>
             </div>

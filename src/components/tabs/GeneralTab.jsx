@@ -1,5 +1,5 @@
 import React from 'react';
-import { Thermometer, Droplets, Sun, Zap, Database, Maximize, Clock, Activity, AlertTriangle, Skull, Map } from 'lucide-react';
+import { Thermometer, Droplets, Sun, Zap, Database, Maximize, Clock, Activity, AlertTriangle, Skull, Map, Waves } from 'lucide-react';
 import { renderValue, MetricBox, getToxicityColor, parseToxicity } from '../PlantDetailUtils';
 
 const GeneralTab = ({ data, t }) => {
@@ -27,21 +27,75 @@ const GeneralTab = ({ data, t }) => {
 
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '15px' }}>
-                <MetricBox icon={Thermometer} label={t.metrics.tempRange} value={data.metadata?.temperature} />
-                <MetricBox icon={Droplets} label={t.metrics.hydration} value={data.metadata?.humidity} />
-                <MetricBox icon={Maximize} label={t.metrics.specimenSize} value={data.metadata?.size} />
-                <MetricBox icon={Clock} label={t.metrics.timeToAdult} value={data.metadata?.time_to_adult} />
-                <MetricBox icon={Activity} label={t.metrics.lifespan} value={data.metadata?.lifespan} />
-
-
-                <div className="glass-panel" style={{ padding: '15px', borderLeft: '2px solid #ffb700', height: '100%' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                        <Sun size={14} color="#ffb700" />
-                        <span className="mono" style={{ fontSize: '0.6rem', color: 'var(--text-secondary)', letterSpacing: '1px' }}>{t.metrics.luxExposure}</span>
+                <div className="glass-panel" style={{ padding: '15px', borderLeft: '2px solid rgba(0, 242, 255, 0.4)', height: '100%', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                            <Thermometer size={14} color="var(--accent-color)" />
+                            <span className="mono" style={{ fontSize: '0.6rem', color: 'var(--text-secondary)', letterSpacing: '1px' }}>{t.metrics.tempRange}</span>
+                        </div>
+                        <div style={{ fontSize: '0.85rem', color: 'var(--text-primary)', lineHeight: '1.2' }}>{renderValue(data.metadata?.temperature)}</div>
                     </div>
-                    <div style={{ fontSize: '1rem', color: 'var(--text-primary)', lineHeight: '1.2' }}>{renderValue(data.metadata?.light)}</div>
+                    <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                            <Sun size={14} color="#ffb700" />
+                            <span className="mono" style={{ fontSize: '0.6rem', color: 'var(--text-secondary)', letterSpacing: '1px' }}>{t.metrics.luxExposure}</span>
+                        </div>
+                        <div style={{ fontSize: '0.85rem', color: 'var(--text-primary)', lineHeight: '1.2' }}>{renderValue(data.metadata?.light)}</div>
+                    </div>
                 </div>
-                <MetricBox icon={Map} label={t.metrics.origin} value={data.metadata?.native_to} />
+                <div className="glass-panel" style={{ padding: '15px', borderLeft: '2px solid rgba(0, 242, 255, 0.4)', height: '100%', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                            <Droplets size={14} color="var(--accent-color)" />
+                            <span className="mono" style={{ fontSize: '0.6rem', color: 'var(--text-secondary)', letterSpacing: '1px' }}>{t.metrics.hydration}</span>
+                        </div>
+                        <div style={{ fontSize: '0.85rem', color: 'var(--text-primary)', lineHeight: '1.2' }}>{renderValue(data.metadata?.humidity)}</div>
+                    </div>
+                    <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                            <Waves size={14} color="var(--accent-color)" />
+                            <span className="mono" style={{ fontSize: '0.6rem', color: 'var(--text-secondary)', letterSpacing: '1px' }}>{t.cultivationLabels?.drainage?.toUpperCase() || 'DRENAGEM'}</span>
+                        </div>
+                        <div style={{ fontSize: '0.85rem', color: 'var(--text-primary)', lineHeight: '1.2' }}>{renderValue(data.cultivation?.drainage)}</div>
+                    </div>
+                </div>
+
+                <div className="glass-panel" style={{ padding: '15px', borderLeft: '2px solid rgba(0, 242, 255, 0.4)', height: '100%', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                            <Maximize size={14} color="var(--accent-color)" />
+                            <span className="mono" style={{ fontSize: '0.6rem', color: 'var(--text-secondary)', letterSpacing: '1px' }}>{t.metrics.height}</span>
+                        </div>
+                        <div style={{ fontSize: '0.85rem', color: 'var(--text-primary)', lineHeight: '1.2' }}>{renderValue(data.metadata?.height)}</div>
+                    </div>
+                    <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                            <Thermometer size={14} color="var(--accent-color)" style={{ transform: 'rotate(90deg)' }} />
+                            <span className="mono" style={{ fontSize: '0.6rem', color: 'var(--text-secondary)', letterSpacing: '1px' }}>{t.metrics.crownWidth}</span>
+                        </div>
+                        <div style={{ fontSize: '0.85rem', color: 'var(--text-primary)', lineHeight: '1.2' }}>{renderValue(data.metadata?.crown_width)}</div>
+                    </div>
+                </div>
+
+                <div className="glass-panel" style={{ padding: '15px', borderLeft: '2px solid rgba(0, 242, 255, 0.4)', height: '100%', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                            <Clock size={14} color="var(--accent-color)" />
+                            <span className="mono" style={{ fontSize: '0.6rem', color: 'var(--text-secondary)', letterSpacing: '1px' }}>{t.metrics.timeToAdult}</span>
+                        </div>
+                        <div style={{ fontSize: '0.85rem', color: 'var(--text-primary)', lineHeight: '1.2' }}>{renderValue(data.metadata?.time_to_adult)}</div>
+                    </div>
+                    <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                            <Activity size={14} color="var(--accent-color)" />
+                            <span className="mono" style={{ fontSize: '0.6rem', color: 'var(--text-secondary)', letterSpacing: '1px' }}>{t.metrics.lifespan}</span>
+                        </div>
+                        <div style={{ fontSize: '0.85rem', color: 'var(--text-primary)', lineHeight: '1.2' }}>{renderValue(data.metadata?.lifespan)}</div>
+                    </div>
+                </div>
+
+
+
                 <div className="glass-panel" style={{
                     padding: '15px',
                     borderLeft: `2px solid ${getToxicityColor(displayToxicityLevel)}`,

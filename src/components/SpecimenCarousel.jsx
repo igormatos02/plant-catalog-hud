@@ -129,21 +129,7 @@ const SpecimenCarousel = ({ images, name }) => {
                         />
                     </AnimatePresence>
 
-                    {/* Scanning Line Effect */}
-                    <motion.div
-                        animate={{ top: ['0%', '100%', '0%'] }}
-                        transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                        style={{
-                            position: 'absolute',
-                            left: 0,
-                            right: 0,
-                            height: '1px',
-                            background: 'rgba(0, 242, 255, 0.3)',
-                            boxShadow: '0 0 10px rgba(0, 242, 255, 0.5)',
-                            zIndex: 5,
-                            pointerEvents: 'none'
-                        }}
-                    />
+
                 </div>
 
                 {/* Navigation Controls */}

@@ -182,10 +182,12 @@ export const translations = {
             toxicityLevel: "NIVEL DE TOXICIDADE",
             specimenSize: "TAMANHO DO ESPÉCIME",
             timeToAdult: "TEMPO ATÉ ADULTO",
+            height: "ALTURA",
+            crownWidth: "LARGURA DA COROA",
             lifespan: "EXPECTATIVA DE VIDA",
             pruning: "PODA",
             plantingSeason: "ESTAÇÃO DE PLANTIO",
-            origin: "ORIGEM",
+            origin: "Origem",
             caution: "CUIDADO",
             danger: "PERIGO",
             health: {

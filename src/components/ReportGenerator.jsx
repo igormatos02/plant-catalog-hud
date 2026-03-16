@@ -20,6 +20,7 @@ const ReportGenerator = ({ plant, currentLanguage, t }) => {
         const data = await getPlantPdfReportData(plant.scientific_name, currentLanguage);
         // Fallback to local props if AI fails
         return data || {
+            name: plant.name,
             scientific_name: plant.scientific_name,
             popular_name: plant.popular_name,
             description: plant.description,
@@ -73,61 +74,53 @@ const ReportGenerator = ({ plant, currentLanguage, t }) => {
             pdf.setTextColor(5, 12, 16);
             pdf.setFont('helvetica', 'bold');
             pdf.setFontSize(32);
-            pdf.text(String(reportData.popular_name || 'UNIDENTIFIED').toUpperCase(), margin, 35);
+            pdf.text(String(reportData.name?.split('(')[0].trim() || reportData.popular_name?.split('(')[0].trim() || 'UNIDENTIFIED').toUpperCase(), margin, 35);
 
             pdf.setFontSize(16);
             pdf.setFont('helvetica', 'italic');
             pdf.setTextColor(0, 172, 193);
             pdf.text(String(reportData.scientific_name || 'Specimen Unknown'), margin, 43);
 
-            pdf.setFontSize(10);
-            pdf.setFont('helvetica', 'normal');
-            pdf.setTextColor(153, 153, 153);
-            pdf.text(`ARCHIVE_REF: ${reportData.metadata?.gbifId || '---'}`, margin, 48);
-
             // --- SECTION: TAXONOMY & VITALS ---
             let currentY = 55;
             pdf.setDrawColor(0, 172, 193);
             pdf.setFillColor(248, 250, 252);
-            pdf.rect(margin, currentY, 80, 55, 'FD'); // Increased height
+            pdf.rect(margin, currentY, 170, 25, 'FD'); // Wide single block
 
             pdf.setTextColor(0, 172, 193);
-            pdf.setFontSize(8);
+            pdf.setFontSize(7);
             pdf.setFont('courier', 'bold');
-            pdf.text('[TAXON_DATA]', margin + 5, currentY + 7);
+            pdf.text('CLASS', margin + 5, currentY + 5);
+            pdf.text('ORDER', margin + 35, currentY + 5);
+            pdf.text('FAMILY', margin + 65, currentY + 5);
+            pdf.text('GENUS', margin + 100, currentY + 5);
+            pdf.text('SPECIES', margin + 130, currentY + 5);
 
-            pdf.setTextColor(153, 153, 153);
+            pdf.setTextColor(51, 65, 85);
             pdf.setFont('helvetica', 'normal');
-            pdf.setFontSize(9);
-            pdf.text(`CLASS:  ${String(reportData.taxonomy?.class || '---')}`, margin + 5, currentY + 15);
-            pdf.text(`ORDER:  ${String(reportData.taxonomy?.order || '---')}`, margin + 5, currentY + 22);
-            pdf.text(`FAMILY: ${String(reportData.taxonomy?.family || '---')}`, margin + 5, currentY + 29);
-            pdf.text(`GENUS:  ${String(reportData.taxonomy?.genus || '---')}`, margin + 5, currentY + 36);
-            pdf.text(`SPECIES: ${String(reportData.taxonomy?.species || reportData.metadata?.type || '---')}`, margin + 5, currentY + 43);
-
-            pdf.setDrawColor(245, 158, 11);
-            pdf.setFillColor(255, 252, 240);
-            pdf.rect(110, currentY, 80, 55, 'FD'); // Increased height
+            pdf.text(`${String(reportData.taxonomy?.class || '---').substring(0, 15)}`, margin + 5, currentY + 10);
+            pdf.text(`${String(reportData.taxonomy?.order || '---').substring(0, 15)}`, margin + 35, currentY + 10);
+            pdf.text(`${String(reportData.taxonomy?.family || '---').substring(0, 15)}`, margin + 65, currentY + 10);
+            pdf.text(`${String(reportData.taxonomy?.genus || '---').substring(0, 15)}`, margin + 100, currentY + 10);
+            pdf.text(`${String(reportData.taxonomy?.species || reportData.metadata?.type || '---').substring(0, 15)}`, margin + 130, currentY + 10);
 
             pdf.setTextColor(245, 158, 11);
             pdf.setFont('courier', 'bold');
-            pdf.setFontSize(8);
-            pdf.text('[VITAL_SIGNS]', 115, currentY + 7);
+            pdf.text('HUMIDITY', margin + 5, currentY + 18);
+            pdf.text('TEMP', margin + 35, currentY + 18);
+            pdf.text('LIGHT', margin + 65, currentY + 18);
+            pdf.text(`${(t.metrics.timeToAdult || 'ADULT_AT').substring(0, 10)}`.toUpperCase(), margin + 100, currentY + 18);
+            pdf.text(`${(t.metrics.lifespan || 'LIFESPAN').substring(0, 10)}`.toUpperCase(), margin + 130, currentY + 18);
 
-            pdf.setTextColor(153, 153, 153);
+            pdf.setTextColor(51, 65, 85);
             pdf.setFont('helvetica', 'normal');
-            pdf.setFontSize(9);
-            pdf.text(`HUMIDITY: ${String(reportData.metadata?.humidity || '---')}`, 115, currentY + 15);
-            pdf.text(`TEMP:     ${String(reportData.metadata?.temperature || '---')}`, 115, currentY + 22);
-            pdf.text(`LIGHT:    ${String(reportData.metadata?.light || '---')}`, 115, currentY + 29);
-            pdf.text(`${(t.metrics.timeToAdult || 'ADULT_AT').toUpperCase()}: ${String(reportData.metadata?.time_to_adult || '---')}`, 115, currentY + 36);
-            pdf.text(`${(t.metrics.lifespan || 'LIFESPAN').toUpperCase()}: ${String(reportData.metadata?.lifespan || '---')}`, 115, currentY + 43);
+            pdf.text(`${String(reportData.metadata?.humidity || '---').substring(0, 15)}`, margin + 5, currentY + 23);
+            pdf.text(`${String(reportData.metadata?.temperature || '---').substring(0, 15)}`, margin + 35, currentY + 23);
+            pdf.text(`${String(reportData.metadata?.light || '---').substring(0, 15)}`, margin + 65, currentY + 23);
+            pdf.text(`${String(reportData.metadata?.time_to_adult || '---').substring(0, 15)}`, margin + 100, currentY + 23);
+            pdf.text(`${String(reportData.metadata?.lifespan || '---').substring(0, 15)}`, margin + 130, currentY + 23);
 
-            const toxLevel = parseInt(reportData.metadata?.toxicity_level || '1');
-            pdf.setTextColor(toxLevel > 2 ? 239 : 153, toxLevel > 2 ? 68 : 153, toxLevel > 2 ? 68 : 153);
-            pdf.text(`TOXICITY: LEVEL ${toxLevel}`, 115, currentY + 50);
-
-            currentY = 120; // Adjusted starting Y for next section
+            currentY = 90; // Adjusted starting Y for next section
 
             // --- SECTION: DESCRIPTION ---
             checkPageBreak(30);
@@ -221,7 +214,7 @@ const ReportGenerator = ({ plant, currentLanguage, t }) => {
 
             // --- SECTION: CULINARY ---
             if (reportData.culinary && reportData.culinary.culinary_use && reportData.culinary.culinary_use !== 'NOT_APPLICABLE') {
-                checkPageBreak(40);
+                checkPageBreak(30);
                 pdf.setTextColor(245, 158, 11); // Amber for Culinary to distinguish from Cultivation
                 pdf.setFont('courier', 'bold');
                 pdf.setFontSize(8);
@@ -229,8 +222,8 @@ const ReportGenerator = ({ plant, currentLanguage, t }) => {
 
                 pdf.setTextColor(51, 65, 85);
                 const culMain = pdf.splitTextToSize(reportData.culinary.culinary_use, pageWidth - 40);
-                pdf.text(culMain, margin, currentY + 8);
-                currentY += (culMain.length * 5) + 12;
+                pdf.text(culMain, margin, currentY + 6);
+                currentY += (culMain.length * 5) + 8;
 
                 const culParts = [
                     { label: 'LEAVES:', val: reportData.culinary.culinary_leaves },
@@ -262,7 +255,7 @@ const ReportGenerator = ({ plant, currentLanguage, t }) => {
             pdf.text(`TIMESTAMP: ${new Date().toLocaleString()}`, pageWidth - 70, pageHeight - 10);
 
             // 4. Download
-            pdf.save(`AG_REPORT_${reportData.popular_name?.replace(/[^a-z0-9]/gi, '_').toUpperCase() || 'SPECIMEN'}.pdf`);
+            pdf.save(`AG_REPORT_${(reportData.name?.split('(')[0].trim() || reportData.popular_name?.split('(')[0].trim())?.replace(/[^a-z0-9]/gi, '_').toUpperCase() || 'SPECIMEN'}.pdf`);
             setIsGenerating(false);
             setProgress('');
 

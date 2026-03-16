@@ -46,10 +46,11 @@ const VisualPdfTemplate = ({ plant, t }) => {
                    but the user asked to remove borders from boxes "menos para as caixas de descricao inicial".
                    Let's target the inner grid boxes specifically to remove their backgrounds/borders. */
                 
+                /* Only keep base styling, remove specific description box border overrides */
                 #visual-pdf-root > div > div > .glass-panel:first-child {
-                    border: 1px solid #e2e8f0 !important;
-                    background: #ffffff !important;
-                    padding: 20px !important;
+                    border: none !important;
+                    background: transparent !important;
+                    padding: 0 0 20px 0 !important;
                     margin-bottom: 20px !important;
                 }
 
@@ -62,6 +63,7 @@ const VisualPdfTemplate = ({ plant, t }) => {
                 #visual-pdf-root .glass-panel p, #visual-pdf-root .glass-panel span {
                     color: #334155 !important;
                 }
+                
                 #visual-pdf-root .mono {
                     font-family: 'JetBrains Mono', 'Fira Code', monospace;
                 }
@@ -77,10 +79,10 @@ const VisualPdfTemplate = ({ plant, t }) => {
 
             <div style={{ borderBottom: '2px solid #00acc1', paddingBottom: '15px', marginBottom: '15px' }}>
                 <h2 className="mono" style={{ color: '#00acc1', fontSize: '0.9rem', marginBottom: '5px' }}>
-                    A.G. BOTANICS // {plant.popular_name?.toUpperCase() || 'SPECIMEN_REPORT'}
+                    A.G. BOTANICS // {plant.scientific_name?.toUpperCase() || 'SPECIMEN_REPORT'}
                 </h2>
                 <h1 style={{ fontSize: '2.5rem', fontWeight: 800, margin: '0 0 10px 0', letterSpacing: '-1px' }}>
-                    {plant.scientific_name?.toUpperCase() || 'UNKNOWN_SPECIMEN'}
+                    {(plant.name?.split('(')[0].trim() || 'UNKNOWN_SPECIMEN').toUpperCase()}
                 </h1>
 
                 <div className="mono" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', fontSize: '0.65rem', color: '#64748b' }}>
@@ -122,44 +124,57 @@ const VisualPdfTemplate = ({ plant, t }) => {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 {/* Custom General Layout for PDF */}
-                <div>
-                    <div className="glass-panel" style={{ padding: '30px', marginBottom: '10px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                            <Database size={24} color="var(--accent-color)" />
-                            <span className="mono" style={{ fontSize: '0.8rem', letterSpacing: '1px' }}>{t.tabs.description.toUpperCase()}</span>
+
+                <div className="glass-panel" style={{ padding: '0 0 30px 0', marginBottom: '0px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', borderBottom: '2px solid #00acc1', paddingBottom: '15px' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px', alignItems: 'center' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <Thermometer size={16} color="var(--accent-color)" />
+                                <span style={{ fontSize: '0.95rem', color: 'var(--text-primary)' }}>{renderValue(plant.metadata?.temperature)}</span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <Droplets size={16} color="var(--accent-color)" />
+                                <span style={{ fontSize: '0.95rem', color: 'var(--text-primary)' }}>{renderValue(plant.metadata?.humidity)}</span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <Sun size={16} color="#ffb700" />
+                                <span style={{ fontSize: '0.95rem', color: 'var(--text-primary)' }}>{renderValue(plant.metadata?.light)}</span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <Clock size={16} color="var(--accent-color)" />
+                                <span style={{ fontSize: '0.95rem', color: 'var(--text-primary)' }}>{renderValue(plant.metadata?.lifespan)}</span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <Maximize size={16} color="var(--accent-color)" />
+                                <span style={{ fontSize: '0.95rem', color: 'var(--text-primary)' }}>{renderValue(plant.metadata?.size)}</span>
+                            </div>
                         </div>
-                        <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: '1.7', margin: 0 }}>
-                            {renderValue(plant.description, t.tabs.unavailable || 'NO DESCRIPTION AVAILABLE.')}
-
-                            {plant.metadata?.toxicity && (
-                                <span style={{ display: 'block', marginTop: '15px' }}>
-                                    <strong>Toxicidade:</strong> {plant.metadata.toxicity}
-                                </span>
-                            )}
-
-                            <span style={{ display: 'block', marginTop: '5px' }}>
-                                <strong>{t.metrics.origin || 'Origem'}:</strong> {plant.metadata?.native_to || 'Desconhecida'}
-                            </span>
-                        </p>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
+                        <Database size={18} color="var(--accent-color)" />
+                        <h3 className="mono" style={{ margin: 0, fontSize: '0.8rem', letterSpacing: '2px' }}>{t.tabs.description.toUpperCase()}</h3>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '15px' }}>
-                        <MetricBox icon={Thermometer} label={t.metrics.tempRange} value={plant.metadata?.temperature} />
-                        <MetricBox icon={Droplets} label={t.metrics.hydration} value={plant.metadata?.humidity} />
-                        <MetricBox icon={Maximize} label={t.metrics.specimenSize} value={plant.metadata?.size} />
-                        <MetricBox icon={Clock} label={t.metrics.timeToAdult} value={plant.metadata?.time_to_adult} />
-                        <MetricBox icon={Activity} label={t.metrics.lifespan} value={plant.metadata?.lifespan} />
+                    <div style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: '1.7', margin: 0, paddingLeft: '32px' }}>
+                        {renderValue(plant.description, t.tabs.unavailable || 'NO DESCRIPTION AVAILABLE.')}
 
-                        <div className="glass-panel" style={{ padding: '15px', borderLeft: '2px solid #ffb700', height: '100%' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                                <Sun size={14} color="#ffb700" />
-                                <span className="mono" style={{ fontSize: '0.6rem', color: 'var(--text-secondary)', letterSpacing: '1px' }}>{t.metrics.luxExposure}</span>
+                        {plant.metadata?.toxicity && (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px' }}>
+                                {tLevel >= 4 ? <Skull size={14} color={tColor} /> : <AlertTriangle size={14} color={tColor} />}
+                                <span><strong>Toxicidade:</strong> {plant.metadata.toxicity}</span>
                             </div>
-                            <div style={{ fontSize: '1rem', color: 'var(--text-primary)', lineHeight: '1.2' }}>{renderValue(plant.metadata?.light)}</div>
+                        )}
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '6px' }}>
+                            <Database size={14} color="var(--text-secondary)" />
+                            <span><strong>{t.metrics.origin || 'Origem'}:</strong> {plant.metadata?.native_to || 'Desconhecida'}</span>
                         </div>
                     </div>
                 </div>
-                {plant.culinary && <CulinaryTab data={plant.culinary} fullData={plant} t={t} />}
+
+
+
+                {plant.culinary && <CulinaryTab data={plant.culinary} fullData={plant} t={t} isPdfReport={true} />}
                 {plant.medical && <MedicalTab data={plant.medical} fullData={plant} t={t} />}
                 {plant.cultivation && <CultivationTab data={plant.cultivation} t={t} />}
                 {plant.health && <HealthTab data={plant.health} t={t} />}
@@ -260,7 +275,7 @@ export const generateVisualPdf = async (plant, t, setProgress) => {
                             pdf.setFontSize(10);
                             pdf.setTextColor(0, 172, 193); // #00acc1 (Accent color)
                             pdf.setFont('helvetica', 'bold');
-                            const plantName = plant.popular_name?.toUpperCase() || 'SPECIMEN';
+                            const plantName = plant.name?.split('(')[0].trim().toUpperCase() || plant.popular_name?.split('(')[0].trim().toUpperCase() || 'SPECIMEN';
                             pdf.text(`AG. Botanics // ${plantName}`, 15, 12);
                         }
 
@@ -277,7 +292,7 @@ export const generateVisualPdf = async (plant, t, setProgress) => {
                         pdf.text(pageText, pdfWidth - textWidth - 15, pageHeight - 5);
                     }
 
-                    pdf.save(`AG_VISUAL_${plant.popular_name?.replace(/[^a-z0-9]/gi, '_').toUpperCase() || 'SPECIMEN'}.pdf`);
+                    pdf.save(`AG_VISUAL_${(plant.name?.split('(')[0].trim() || plant.popular_name?.split('(')[0].trim())?.replace(/[^a-z0-9]/gi, '_').toUpperCase() || 'SPECIMEN'}.pdf`);
 
                     // Cleanup
                     root.unmount();

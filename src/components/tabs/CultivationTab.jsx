@@ -13,7 +13,7 @@ const CultivationCard = ({ title, content, icon: Icon, color = 'var(--accent-col
                 {Icon && <Icon size={14} color={color} />}
                 <h4 className="mono" style={{ margin: 0, fontSize: '0.7rem', color: color, letterSpacing: '1px' }}>{title.toUpperCase()}</h4>
             </div>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: '1.6', margin: 0 }}>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: '1.6', margin: 0, paddingLeft: '22px' }}>
                 {content}
             </p>
         </div>
@@ -30,7 +30,7 @@ const CultivationTab = ({ data, t }) => {
                     <Sprout size={18} color="var(--accent-color)" />
                     <h3 className="mono" style={{ margin: 0, fontSize: '0.8rem', letterSpacing: '2px' }}>{t.cultivationLabels?.protocol || 'CULTIVATION_PROTOCOL'}</h3>
                 </div>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: '1.8' }}>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: '1.8', paddingLeft: '30px' }}>
                     {renderValue(data.cultivation, t.cultivationLabels?.noData || 'NO DATA AVAILABLE FOR CULTIVATION PROTOCOLS.')}
                 </p>
             </div>

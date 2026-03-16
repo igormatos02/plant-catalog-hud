@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Loader2, Database, RefreshCw, AlertTriangle, Skull } from 'lucide-react';
+import { Search, Loader2, Database, RefreshCw, AlertTriangle, Skull, Map } from 'lucide-react';
 import { translations } from '../lib/translations';
 import { getCompletePlantData, fetchGoogleImages } from '../lib/gemini';
 import { renderValue, parseToxicity, getToxicityColor } from './PlantDetailUtils';
@@ -13,6 +13,7 @@ import CultivationTab from './tabs/CultivationTab';
 import HealthTab from './tabs/HealthTab';
 import SpecimenCarousel from './SpecimenCarousel';
 import LifecycleChart from './LifecycleChart';
+import SeasonalGauges from './SeasonalGauges';
 import ReportGenerator from './ReportGenerator';
 
 const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) => {
@@ -21,6 +22,18 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
     const [activeTab, setActiveTab] = useState('general');
     const [fullPlantData, setFullPlantData] = useState(null);
     const [isDetailsLoading, setIsDetailsLoading] = useState(false);
+    const [userRegionName, setUserRegionName] = useState('Global');
+    const [userCountryCode, setUserCountryCode] = useState(null);
+
+    // Helper to convert 2-letter ISO code to Flag Emoji
+    const getFlagEmoji = (countryCode) => {
+        if (!countryCode) return '';
+        const codePoints = countryCode
+            .toUpperCase()
+            .split('')
+            .map(char => 127397 + char.charCodeAt());
+        return String.fromCodePoint(...codePoints);
+    };
 
     // Google Custom Image Search Override State
     const [customImages, setCustomImages] = useState(null);
@@ -33,8 +46,24 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
 
             setFullPlantData(null);
             setIsDetailsLoading(true);
+
+            let region = 'Global';
             try {
-                const data = await getCompletePlantData(plant.scientific_name, language);
+                const res = await fetch('https://ipapi.co/json/');
+                const locData = await res.json();
+                if (locData && locData.country_name) {
+                    region = locData.country_name;
+                    setUserCountryCode(locData.country_code);
+                } else {
+                    region = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                }
+            } catch (e) {
+                region = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            }
+            setUserRegionName(region);
+
+            try {
+                const data = await getCompletePlantData(plant.scientific_name, language, false, region);
                 if (data) {
                     setFullPlantData(data);
                 } else {
@@ -94,8 +123,24 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
         if (!plant?.scientific_name) return;
 
         setIsDetailsLoading(true);
+
+        let region = userRegionName;
         try {
-            const data = await getCompletePlantData(plant.scientific_name, language, true);
+            if (region === 'Global') {
+                const res = await fetch('https://ipapi.co/json/');
+                const locData = await res.json();
+                if (locData && locData.country_name) {
+                    region = locData.country_name;
+                    setUserRegionName(region);
+                    setUserCountryCode(locData.country_code);
+                }
+            }
+        } catch (e) {
+            // keep previous
+        }
+
+        try {
+            const data = await getCompletePlantData(plant.scientific_name, language, true, region);
             if (data) {
                 setFullPlantData(data);
                 setCustomImages(null);
@@ -226,21 +271,35 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
 
                     {/* Chart below image */}
                     {!isLoading && currentData.lifecycle && (
-                        <LifecycleChart data={currentData.lifecycle} t={t} />
+                        <>
+                            <LifecycleChart data={currentData.lifecycle} t={t} />
+                            <SeasonalGauges data={currentData.lifecycle} cultivation={currentData.cultivation} />
+                            <div className="mono" style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', textAlign: 'center', marginTop: '10px', opacity: 0.7, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                                DADOS APLICADOS À LOCALIZAÇÃO ATUAL DE {userRegionName.toUpperCase()}
+                                <span style={{ fontSize: '1.2em' }}>{getFlagEmoji(userCountryCode)}</span>
+                            </div>
+                        </>
                     )}
                 </div>
 
                 {/* Right Col: Data */}
                 <div>
                     <header style={{ marginBottom: '30px' }}>
-                        <div style={{ display: 'flex', alignItems: 'baseline', gap: '15px' }}>
-                            <span className="mono" style={{ color: 'var(--accent-color)', fontSize: '0.9rem' }}>{plant.name || '---'}</span>   gbifId:  {plant.gbifId}
-                            <span className="mono" style={{ color: 'var(--text-secondary)', fontSize: '0.7rem', fontStyle: 'italic' }}> {plant.popular_name || ''}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '15px', flexWrap: 'wrap' }}>
+                            <span className="mono" style={{ color: 'var(--accent-color)', fontSize: '0.9rem' }}>{plant.scientific_name || '---'}</span>
+
+                            {currentData?.metadata?.native_to && currentData.metadata.native_to !== 'NOT_APPLICABLE' && currentData.metadata.native_to !== 'Sem Dados' && (
+                                <div className="glass-panel" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '4px 12px' }}>
+                                    <Map size={14} color="var(--accent-color)" />
+                                    <span className="mono" style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', letterSpacing: '1px' }}>{t.metrics.origin.toUpperCase()}:</span>
+                                    <span style={{ fontSize: '0.85rem', color: 'var(--text-primary)' }}>{currentData.metadata.native_to}</span>
+                                </div>
+                            )}
                         </div>
 
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
                             <h1 style={{ fontSize: '3.5rem', fontWeight: 800, margin: '10px 0', letterSpacing: '-1px' }}>
-                                {plant.scientific_name?.toUpperCase() || 'UNKNOWN_SPECIMEN'}
+                                {(plant.name?.split('(')[0].trim() || 'UNKNOWN_SPECIMEN').toUpperCase()}
                             </h1>
                             <div style={{ display: 'flex', gap: '10px' }}>
                                 {import.meta.env.VITE_SHOW_REFRESH === 'true' && (
@@ -382,6 +441,12 @@ const PlantDetail = ({ plant, onBack, isLoading, isGeneratingImage, language }) 
                                             <span style={{ color: tColor, fontWeight: 'bold' }}>
                                                 Toxicidade {tLevel >= 5 ? 'extremamente alta' : tLevel >= 4 ? 'alta' : 'moderada'}.
                                             </span> {currentData?.metadata?.toxicity}
+
+                                            {currentData?.metadata?.toxic_parts && currentData.metadata.toxic_parts !== 'NOT_APPLICABLE' && (
+                                                <span style={{ display: 'block', marginTop: '6px', color: 'var(--text-secondary)' }}>
+                                                    <strong>Partes Tóxicas:</strong> {currentData.metadata.toxic_parts}
+                                                </span>
+                                            )}
                                         </p>
                                     </div>
                                 </div>

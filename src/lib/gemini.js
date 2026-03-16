@@ -37,7 +37,7 @@ const normalizePlantData = (data, scientificName) => {
     };
 };
 
-export const getCompletePlantData = async (scientificName, language = import.meta.env.VITE_DEFAULT_LANGUAGE || 'en', forceRefresh = false) => {
+export const getCompletePlantData = async (scientificName, language = import.meta.env.VITE_DEFAULT_LANGUAGE || 'en', forceRefresh = false, userRegion = 'Global') => {
     if (!API_KEY) return null;
 
     const langName = getLanguageName(language);
@@ -66,12 +66,12 @@ export const getCompletePlantData = async (scientificName, language = import.met
     // 2. If not in cache, fetch from Gemini
     const prompt = `Provide a comprehensive technical botanical report for the specimen "${scientificName}".
     Return a SINGLE JSON object with all the following information:
-    - name: common name in ${langName}
+    - name: name in ${langName}
     - class, order, genus, family, species (taxonomy)
     - description: technical HUD-style summary (${langName})
     - varieties: known sub-species names (${langName})
-    - metadata: { humidity, gbifId, temperature, light, toxicity, toxicity_level (must be an integer from 1 to 5), size, type, time_to_adult, lifespan, native_to }
-    - lifecycle: 12 objects (January-December) with fields: month, fructification (0-10), flowering (0-10), foliage (0-10), pruning (0-10), is_rain_season, is_sun_season.
+    - metadata: { humidity, gbifId, temperature, light, toxicity, toxic_parts (string, list the specific toxic parts in ${langName}, or NOT_APPLICABLE), toxicity_level (must be an integer from 1 to 5), height, crown_width, type, time_to_adult, lifespan, native_to }
+    - lifecycle: 12 objects (January-December) with fields: month, planting (0-10), flowering (0-10), fructification (0-10), harvest (0-10), pruning (0-10), is_rain_season, is_sun_season. (CRUCIAL: All values MUST be precisely calibrated for the climate of this specific region: ${userRegion}).
     - botany: { botanical_description, foliage, flower, fruit, seed, root, stem, fragrance, leaves, pollinationType, plantType }
     - culinary: { culinary_use, culinary_leaves, culinary_seeds, culinary_fruits, culinary_stem, part_makes_tea, part_makes_oil }
     - medical: { therapeutic_use, oils_and_florals, tea, perfume, soap, sachets, other_subproducts }
@@ -257,7 +257,7 @@ export const getPlantPdfReportData = async (scientificName, language = import.me
     - popular_name: common name.
     - description: technical/poetic summary.
     - taxonomy: { class, order, family, genus }
-    - metadata: { humidity, temperature, light, toxicity, toxicity_level (must be an integer from 1 to 5), size, time_to_adult, lifespan, native_to }
+    - metadata: { humidity, temperature, light, toxicity, toxic_parts, toxicity_level (must be an integer from 1 to 5), size, time_to_adult, lifespan, native_to }
     - culinary: { culinary_use, culinary_leaves, culinary_seeds, culinary_fruits, culinary_stem }
     - medical: { therapeutic_use, oils_and_florals, tea, perfume, soap, sachets }
     - cultivation: { cultivation, soil, drainage, propagation, symbiosis, pruning }
